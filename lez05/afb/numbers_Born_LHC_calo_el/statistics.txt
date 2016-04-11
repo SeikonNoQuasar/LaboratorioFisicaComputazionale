@@ -1,0 +1,56 @@
+  
+ Requested number of weighed events:   1.E+09
+ Unweighted event n.   39415828.
+ Weighted event n.   3.38750281E+09
+ Weighted events after cuts  1000000000
+  
+ Initial state particles:  2212   2212
+ PDFs: MRST2004QED PDFs                                  
+  
+ C. of m. energy =  14000.00 GeV
+ Z/photon production, decaying into electrons
+  
+ W mass      =   80.37399 GeV
+ W width     =   2.0836 GeV
+ Z mass      =   91.1876 GeV
+ Z width     =   2.4924 GeV
+ sin^2(th_w) =   0.223110081
+ delta_r     =   0. (one-loop EW delta_r)        
+  
+ EW RC: born   (MATCHED QED PS)
+  EW input scheme:  0
+  
+ hit or miss cross section  =    737.5463131 +-      0.1167918 (pb)
+ h. or m. out-of-range bias =      0.0000000 +-     0.0000000 (pb)
+ weighted cross section     =    737.5177138 +-      0.0331717 (pb)
+  
+ h. or m. efficiency =   1.16357 %    (out of range =      0)
+ (upper limit =  350., to be set to  59.972556)
+  
+ Events not stored
+ Partial cross sections:
+   0 photons:  737.517714 +-  0.03317173           (npoints:  1000000000)
+  
+ Negative weights statistics:
+  n. of weighted points   = 0
+  n. of unweighted events = 0
+  cross section   0. +-  0.
+  
+ partial q-q['][bar] contributions
+ -5 5   20.3667033
+ -4 4   33.9490299
+ -3 3   68.622014
+ -2 2   116.914133
+ -1 1   128.910908
+ 1 -1   128.921911
+ 2 -2   116.909583
+ 3 -3   68.6151325
+ 4 -4   33.9391758
+ 5 -5   20.369123
+ Sum:   737.517714
+ ....
+ Started by user ID 1002 on node13.cluster, process ID 13379
+ ....
+ Running time statistics:
+ program started  146160 s ago
+ CPU time =  76202 s (of which  75243 s user time)

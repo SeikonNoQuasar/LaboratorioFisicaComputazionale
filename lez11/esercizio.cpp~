@@ -1,0 +1,185 @@
+/*
+	classe resource che contenga un puntatore ad una zona allocata dinamicamente
+	e riempita di numeri random (e ricordarsi in distruzione de de-allocare la memoria)
+	scrivere: 	- copy constructor (semantica di copia)
+			- operatore =
+			- una funzione move (semantica di spostamento) [efficiente!]
+			- una funzione swap (che scambi due oggetti) [efficiente!]
+*/
+
+#include <iostream>
+using namespace std;
+
+/*
+	uso la vecchia classe random creata nello scorso lab
+*/
+
+#include <cmath>
+
+class caso{
+
+public:
+	caso(int seed);
+	~caso();
+
+	void seta(int a);
+	void setc(int c);
+	void setm(int m);
+	void setseed(int seed);
+
+	double random();
+
+private:
+	unsigned int _a;
+	unsigned int _c;
+	unsigned int _m;
+	unsigned int _seed;
+
+};
+
+caso::caso(int seed){
+	_a = 1664525;
+	_c = 1013904223;
+	_m = pow(2, 31);
+	_seed = seed;
+}
+
+caso::~caso(){
+}
+
+void caso::seta(int a){
+	_a = a;
+}
+
+void caso::setc(int c){
+	_c = c;
+}
+
+void caso::setm(int m){
+	_m = m;
+}
+
+void caso::setseed(int seed){
+	_seed = seed;
+}
+
+double caso::random(){		//crea numeri casuali tra 0 e 1
+	int n;
+	int prec = _seed;
+	//std::cout << prec << std::endl;
+	double d;
+	n = (_a*prec+_c)%_m;
+	//std::cout << n << std::endl;
+	d = n/double(_m-1);
+	//std::cout << d << std::endl;
+	_seed = n;
+	return d;
+}
+
+
+
+
+/*
+Fine della parte pregenerata
+*/
+
+class resource {
+private:
+	int n_;
+	double * p_;
+
+public:
+	resource(int, int);
+	~resource();
+
+	resource(const resource &);
+	void operator= (const resource &);
+	void move(resource *);
+	void swap(resource *);
+	void print() { for(int u=0; u<n_; u++) cout << p_[u] << endl;}
+
+};
+
+resource::resource(int i, int seed){ 
+
+		n_ = i; 
+		caso c(seed);
+	
+		p_ = new double[n_];
+
+		for(int j=0; j<n_; j++)  p_[j]=c.random();
+};
+
+resource::~resource(){
+
+		delete[] p_;
+}
+
+resource::resource(const resource & old){
+
+		n_ = old.n_;
+		p_ = new double[n_];	
+		for(int j=0; j<n_; j++) p_[j] = old.p_[j];
+}
+
+void resource::operator= (const resource & rhs){
+
+		if(this->n_ != rhs.n_) cout << "Non ho potuto operare un'assegnazione tra vettori di dimensione diversa" << endl;
+		else{
+		for(int j=0; j<n_; j++) this->p_[j] = rhs.p_[j];	//se vuoi fare con n diversi devi esplicitare la possibilita'
+		}
+	
+}
+
+void resource::move(resource *m){
+}
+
+void resource::swap(resource *s){
+}
+		
+		
+
+int main(){
+		resource c(5,3), d(5,10);
+
+		cout << " c " << endl;
+		c.print();
+		cout << endl;
+		cout << " d " << endl;
+		d.print();
+		cout << endl;
+	
+		d = c;
+	
+		cout << "d = c" << endl;
+		d.print();
+		cout << endl;
+
+		
+
+		
+
+	return 0;
+}
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

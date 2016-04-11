@@ -1,0 +1,120 @@
+Lez13		()
+
+################################### SOLO PRIMA PARTE: C++
+
+	"Most vexing parse" (errore)
+	- compare ogni volta che scriviamo qualcosa della forma: " nome_tipo nome_variabile( nome_tipo2() ) " ovvero cerco di inizializzare
+		nome_variabile con una variabile costruita con il costruttore di default di nome_tipo2.
+	- c'e` un'ambiguita', perche` con la stessa sintassi si scrive che: voglio dichiarare una funzione di nome "nome_var" che restituisce un oggetto
+		di tipo nome_tipo e vuole come argomento una funzione senza nome che restituisce un valore di tipo nome_tipo2 (come se come argomento
+		usassi "nome_tipo2 pollo()" )
+	- gravissimo bug, puo' passare in compilazione e creare molti problemi in runtime
+	- RISOLUZIONE:
+		aggiungere delle parentesi aggiuntive, e scrivere quindi in questa forma:
+			nome_tipo nome_variabile( ( nome_tipo2() ) )
+
+
+ancora da template.cpp (lezione 12)
+_______________________________________________________________________________----
+
+template<typename T = int>
+class mypair {
+	T x_,y_;
+public:
+	mypair(T x, T y) : x_(x), y_(y){};
+	T get_x() { return x_;}
+	T get_y();
+};
+
+template<typename T>			//devo spiegare anche qui alla funzione che T e' un tipo speciale definito per il template
+T mypair<T>::get_y() { return y_;}		//e posso quindi comportarmi normalmente
+
+
+[blabla...]
+_______________________________________________________________________
+
+
+
+esercizioT.cpp --
+
+
+
+esercizio.cpp:
+
+______________________________________________________________________
+/*
+scrivi uno smart-pointer
+*/
+______________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

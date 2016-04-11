@@ -1,0 +1,83 @@
+Lezione 00 (wwwteor.mi.infn.it/~vicini/lezioni1112/lezione_1_linux.html)
+
+
+/*****************************************************************
+Argomenti:
+
+# Cos'è e come funziona un sistema operativo
+# Come funziona Unix
+# Muoversi in Unix
+# Uso di ssh
+# Assegnare i permessi
+# LaTeX
+*****************************************************************/
+
+
+*	ls -> mostra le cartelle nella posizione in cui mi trovo senza informazioni
+*	ls -la ->	*il -l sta per long, ovvero ricavo più informzioni sulle cartelle, per esempio se la prima 				letterà è una "d" so che si tratta di una directory. "x" e "w" e "r" indicano i diritti di 				leggere (read), scrivere(write) e eseguire(execute)
+
+*	cd . -> posizione attuale
+*	cd .. -> indietro di una posizione
+*	cd -/home/bla/blabla -> vai in questa posizione
+*	cd - -> torna alla posizione precedente
+
+*	df -> mostra la quantita' memoria _________
+	du -> mostra il contenuto della directory in cui ci si trova e la dimensione di ciascuno
+	du -s -> mostra semplicemente la quantità in bytes di memoria usata nella directory
+
+*	man ls -> da una lista di tutte le "opzioni" e spiega cosa fa il comando (in questo caso ls)
+*	ls --help -> altro sistema di visualizzare le opzioni in una versione più ristretta del "man ls"
+
+*	*programma* -v -> mostra la versione del programma (per esempio "gcc -v" mostra la versione di gcc)
+*	whoami -> mostra il loginname (ovvero con che account sono loggato)
+
+*	per collegarsi a LCM da un altro pc:	ssh -XY edoardoaccetta@lcm.mi.infn.it	(PSW: _ _ _ _ _ _ _ _ # _ _ )
+		- ssh apre una shell da cui eseguire i comandi 
+		- -XY permette di aprire tutto ciò che richiede una finestra grafica ( permette il "tunnelling" ovvero 			  il passaggio di dati tra le due macchine) ((-Y è particolare per alcune funzionalità di LCM))
+
+*	per importare file attraverso ssh:	scp edoardoaccetta@lcm.mi.infn.it:*filename* *location*
+		- sto passando un file *filename* in lcm su pc, e scrivo questa stringa nel terminal di lcm. *location* 		  sta per la directory dove voglio salvare il fil che trasposto nel pc
+		- il filename posso scriverlo anche come indirizzo "/home/pollo/cavoli"
+		- posso usare "." come location, e indica la cartella in cui mi trovo nel terminal in cui non ho usato 			  ssh
+*	per esportare file attraverso ssh:	scp *filename* edoardoaccetta@lcm.mi.infn.it:*location*
+
+*	ping www.google.it -> mi permette di valutare il ping per la connessione al sito e mostra il suo IP
+
+*	rmdir -> elimina una cartella vuota
+*	rm * -> elimina tutto il contenuto di una cartella
+
+*	tra i programmi per scrivere (tipo gedit) ci sono anche emacs(consigliato), pico
+
+*	Unix è CASE SENSITIVE ovvero maiuscole e minuscole sono lettere distinte
+
+*	ls *.txt -> elenca tutti i file del tipo .txr
+	ls [aeiou]* -> elenca i file che iniziano con una vocale
+	ls [a-d]*.txt -> elenca tutti i file che iniziano con a,b,c,d e sono del tipo .txt
+
+*	chmod -> modifica i permessi dei file, e seguito da u g o (u = user, g = group, o = others) con "-rwx" o "+rwx": 			 il meno è per togliere permessi, il più è per aggiungerli. "r" sta per r w x (read, write, execute)
+*	less -> (non ho capito ma si una sui file scrivendo dopo l'indirizzo completo) - credo faccia vedere il 		contenuto di un file
+
+*	ln *nomefile* *nomelink* -> permette di creare delle copie di alcuni file che se modificate modificano anche 					    l'originale
+	ln -s *nomefile* *nomelink* -> come sopra, ma invece che creare un altro file copia crea solo un puntatore al 						file originale
+
+
+*	head, tail -> come less ma solo le prima/ultime 5 righe
+*	wc -> conta le parole di un file, se aggiungo -l conta le righe
+
+*	ls -l | wc -l -> mi conta il numero di file nella directory (perchè considera il risultato di ls -l come un file 				 su cui applico wc)
+
+*	grep -> isola e mostra cose in un file (guarda il sito ahhah)
+
+*	tar -> serve per passare i file dell'esame (crea archivi di file)
+		- -cvf (create, verbose, file)
+		- -xvf (extract, verbose, file)
+		- -cvzf oltre che archiviare zippa anche l'archivio
+*	gzip -> serve a comprimere(zippare) i file (e crea file .gz)
+*	gunzip -> un-zippa file compressi
+
+*	matematica usa file .m
+
+*	i file grafici possono presentarsi in forma .ps
+
+* 	LaTeX: un sistema che ha le caratteristiche della programmazione ma serve a fare grafica. Il programma eseguito 		produce appunto qualcosa di grafico.
+		Si può scaricare dal sito web o dalla directory di oggi il file tex.tar.gz che contiene informazioni e 			esempi di usi di LaTeX 

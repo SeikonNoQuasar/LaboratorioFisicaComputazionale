@@ -1,0 +1,173 @@
+Lez10		()
+
+################### PARTE UNO: MATHEMATICA - Esercizi
+
+	- riprende l'esercizio di ieri sul potcentrale
+	- polinomi legendre (quello dopo)
+	- potenziale del dipolo (foglio "visualizzatore" )
+
+################## PARTE DUE: C++
+
+
+ridef.cpp 	(cosa succede quando ridefinisco nella classe derivata qualcosa della classe base)
+________________________________________________
+
+#include <iostream>
+using namespace std;
+
+struct base{
+	int i;
+	Base() : i(1){};
+	void hello() { cout << "It's me! Base!" << endl;}
+};
+
+struct derived : public base {
+	int i; //ridefinizione!
+	derived() : i(2){};
+	void hello() { cout << "It's me! Derived!" << endl;}
+};
+
+int main(){
+	base b;
+	derived d;
+	cout << b.i << " " << d.i << endl;
+	b.hello();
+	d.hello();
+}
+__________________________________________________
+
+gli "i" delle due strutture sono diversi, allo stesso modo la chiamata alle funzione chiama le rispettive funzioni. Ma attenzione, in generale puo' creare problemi, a meno che VIRTUAAAAL (ma lo vedremo poi shhhh)
+
+Posso anche accedere ai membri della base a partire dalla classe derivata (anche se ridefiniti) usando:
+___________________________________________________
+
+	d.base::i;		 // E EDO C'E`!! IL CIELO E` AZZURRO SOPRA IL LAB!!
+	d.base::hello();
+___________________________________________________
+
+WELCOME TO POLYMORPH!!! ( Lulu approves )
+
+instrument.cpp
+_________________________________________________________________
+
+#include<iostream>
+using namespace std;
+
+struct instrument {
+	instrument(const instrument &){ cout << "instrument::copy" << endl;}
+	instrument(){};
+	void play(){ cout << "instrument::plau()" << endl;}
+};
+
+struct piano : public instrument {			// #AncheIPianiSonoStrumenti
+	piano(const piano &){			//in quanto classe derivata, devo per forza mettere un costruttore di default nella classe base
+		cout << "piano::copy" << endl;
+	}
+	piano(){};
+	void play() cout << "piano::play()" << endl;}
+};
+
+void two_note(instrument i){
+	i.play(); i.play();
+}
+
+int main(){
+	piano p;
+	two_note(p);
+}
+_______________________________________________________________
+
+in questo modo non funziona, perche' dato che piano viene passato come isntrument (addirittura dato che passo instrument per copia, la copia di piano viene creata attraverso il copy constructor di instrument -> "slicing" [o upcasting perla referenze e i puntatori]), allora e' li' che viene cercata la funzione.
+
+devo allora anteporre virtual alla funzione in base, e passare instrument per referenza (onde evitare lo slicing) perche' l'upcasting permette polimorf:
+
+_________________________________________________________________
+
+#include<iostream>
+using namespace std;
+
+struct instrument {
+	instrument(const instrument &){ cout << "instrument::copy" << endl;}
+	instrument(){};
+	virtual void play(){ cout << "instrument::plau()" << endl;}
+};
+
+struct piano : public instrument {			// #AncheIPianiSonoStrumenti
+	piano(const piano &){			//in quanto classe derivata, devo per forza mettere un costruttore di default nella classe base
+		cout << "piano::copy" << endl;
+	}
+	piano(){};
+	void play() cout << "piano::play()" << endl;}
+};
+
+void two_note(instrument & i){
+	i.play(); i.play();
+}
+
+int main(){
+	piano p;
+	two_note(p);
+}
+_______________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

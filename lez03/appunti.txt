@@ -1,0 +1,327 @@
+Lez 03		(wwwteor.mi.infn.it/~vicini/lezioni1112/mathematica_1.html)
+
+# MATHEMATICA
+
+*	NOTA: se quando tento a connettermi a matematica e mi esce un comando di errore posso cercare una macchina libera usando (whoall -mf) e facendo 	ssh "nomemacchina" ...)
+
+*	comodo perche' e' un singolo programma che permette due operazioni:
+		- calcolatore scientifico (molto avanzato)
+		- 
+
+*	parte come fosse un terminal, i comandi math e mathematica aprono rispettivamente il  kernel (ovvero da terminale) e la finestra grafica 
+*	kernel: metto un input (2+3) e mi viene assegnato un output (5). comodo per le domande veloci e istantanee, scomodo per problemi articolati in
+	cui sono presenti definizioni e simili.	((quando usi matematica usa anche il & per mantenere il controllo del prompt)) {{Per uscire poi da
+	matematica si usa Quit }}
+
+*	con "<<filename.m" carichiamo un file in matematica.
+
+############### esempio:
+
+	creo il file prova.m che contiene:
+
+	________________
+	a=3;
+	b=5;
+	c=a+b;
+	________________
+
+	uso la stringa <<prova.m e il programma svolge i passaggi uno alla volta.
+
+	________________
+	In: a
+	Out: 3
+	In: b
+	Out: 5
+	In: c
+	Out: 8
+	________________
+
+##########################
+
+
+*	In pratica mathematica funziona come chiamare gedit, ovvero mi apre una finestra  a parte che funziona come math
+*	i comandi propri dei matematica si chiamano tutti con la prima lettera maiuscola. Per esempio il comando "Plot[ Sin[x], {x, 0, 2 Pi} ]" mi apre 	una finestra con grafico seno di x da 0 a 2 pi.
+
+*	l'errore "is not a mchine-size real number" vuol dire che probabilmente ho dimenticato una maiuscola e quindi cerca di disegnare un espressione 	che non e' un numero ma una lettera (per capirci Sin, e' la funzione, sin e' una variabile di nome sin (come fosse x)).
+
+*	tutte le funzioni hanno l-argomento contenuto in una parentesi quadra, tra le graffe ci sono sempre dei valori singoli "iteratori" (vedi il
+	caso di plot, tra le graffe abbiamo {variabile, x_min, x_max} )
+
+*	In Mathematica (ovvero nella finestra) si possono chiamare le funzioni (tipo Plot). il consiglio e' che ogni volta che lo si fa si, le si dia
+	un nome. quindi invece che scrivere "Plot[...]", dire "grafico1=Plot[...];", in questo modo mi viene salvato il grafico, e posso riusarlo e
+	sfruttarlo semplicemente richiamando grafico1.
+
+*	per richiamare l-help si puo' usare " ??*comando* " con al posto di comando il nome della funzione che vogliamo usare, o una parola che
+	sappiamo che il comando contiene. prova ad esempio " ??*Plot* ". Se tolgo gli asterischi mi da semplicemente l-help del comando, prova " ??Plot 
+*	Un esempio di comando modificato suggerito da ??Plot e' l'uso di PlotRange attraverso: " Plot[ Sin[x], {x, 0, 2 Pi}, PlotRange->{-10, 10} ] "
+
+*	esiste anche la funzione " Integrate[ funzione, {x, x_min, x_max}] " oppure per gli integrali indefiniti: uso "x" al posto di "{..}"
+
+*	dato che mathematica funziona con molti tipi di variabili, esiste la funzione Head[] che mi da in output il tipo 
+
+############# esempio:
+
+	In: Head[2]
+	Out: Integer
+
+	In: Head[2.]
+	Out: Real
+
+	In: Head[x]
+	Out: Symbol
+
+	In: Head[ "pippo" ]
+	Out: String
+
+NOTA: 	In: Log[2]
+	Out: Log[2]
+
+	In: Log[2.]
+	Out: 0,6931...
+############################
+
+*	il comando " I " e' l'unita' immaginaria, infatti:
+	In: Head [2 + 3 I]
+	Out: Complex
+
+	notare che per complex si intende una coppia di valori, che in questo caso sono 2 e 3. La funzione FUllForm[ 2+ 3I] mostra in output che 		abbiamo a che fare con un Complex[2, 3]
+
+*	" x y " significa x moltiplicato per y, mentre xy e' un symbolo unico. Se invece voglio scrivere xy devo usarli come " "xy" ", che mi indicano 
+	la stringa
+*	= : assegnazione
+	== : stabilisce una relazione di uguaglianza (o disuguaglianza con !=)
+	=== : verifica l'uguaglianza (restituisce True/False)
+
+*	" ?? " e' un comando che mi dice cosa ci sia dentro. se per esempio ho una variabile di cui non conosco il valore (per esempio a), usando ??a 
+	mi viene restituito il valore contenuto in a
+
+*	tra i varii tipi di oggetti abbiamo le list che sono unione di piu' tipi diversi, per esempio se scrivo:
+___________________________________-
+	prova = {a, {b, c}. f[{x, y}, {w, z}] }
+___________________________________
+
+	facendo Head[prova] si ottiene " List". Posso poi accedere ai vari elementi con nome[[posizione]], per esempio prova[[2]] == {b, c}. Ogni
+	posizione e' un elemento separato da virgole. se volessi accedere a b a partire da prova[[2]]], devo usare prova[[2,1]] == b. 
+	se uso prova[[2,0]] mi	viene restituito List (0vvero la head di quell'elemento)
+
+*	con Regola di Sostituzione si intende un espressione della forma x->y. Head[x->y] == Rule, il comando mi dice di sostituire y a x (dove
+	 vedo x metto y). se preceduto poi da "/." cio' significa apply all, ovvero: la regola di per se si applica una volta, ma se anticipata
+	da /. (ovvero /.{x->y} ) allore mi viene applicata ogni volta. Posso anche fare liste con piu' regole: substitution = {x->y, w->z}: la
+	variabile substitution contiene una lista contenente delle regole
+
+___________________________--
+
+	In: z = x+y	//definisco
+	Out: x + y	//mostra z
+	In: z /. x->t	//applico la sostituzione
+	Out: t + y	// mi mostra cos'e' lout della funzione sostituita (che consiste in z /. x->t != z)
+	In: z		// infatti z rimane invariata
+	Out: x+y	// ^
+
+	// Se invece uso
+
+	In: z1 = z /. x->t
+	Out: t + y
+	In: z1
+	Out: t + y
+___________________________
+
+*	l'ambiente in cui mi vengono salvate tutte le variabii e' Global` (quello e' un accento grave), e posso visualizzarlo con ??Global`*
+	per eliminare una variabile devo usare Clear[a] per svuotare la variabile " a "
+
+##################### esempio:
+
+	In: 7/8
+	     7
+	Out:---
+	     8
+
+	In: 7/8.	//Equivalente a N[7/8], oppure N[7/8, 32] mi calcola la cosa esprimendola con 32 caratteri
+	Out:0.875
+
+	In: Sqrt[80]
+	Out: 4 Sqrt[5]
+
+	In: Sin[PI/4]
+	       1
+	Out: ----- 
+	     Sqrt[2]
+
+	In: Sin[Pi/4.]
+	Out: 0.707...
+##################################
+
+----------------------------------------------------- SECONDA PARTE -------------------------------------------------------------
+-------------------SHELL SCRIPTING--------------------------------------- (cose contenute in LCM lez03)
+
+*	Situazione: ho un programma che voglio eseguire 10 volte con 10 parametri diversi e salvando i 10 risultati diversi. Posso:
+		- introdurre un ciclo for nel programma (che ogni volta ripetera' l'esperimento con i valori diversi) ma cio' mi impiega troppo tempo
+		- suddividere sfruttando il cluster in modo da assegnare un ciclo per cpu, in modo da fare il tutto contemporaneamente. Per farlo devo 			  creare un file di input che mi permetta di dare i varii input diversi -> faticoso per numeri molto alti (100+)
+		- sfruttare lo shell scripting (yeeah)
+
+*	Situazione: ho 3 file pippo1.txt, pippo2.txt, pippo3.txt e voglio rinominarli tutti e tre a pluto1.txt, pluto2.txt, pluto3.txt. Non posso 
+		farlo sfruttando il comando mv perche' dovrei farlo uno per uno, e ci metterei troppo tempo.
+		uso allora un ciclo for da shell:	" for i in$(ls pippo*.txt); do mv $i pluto$i ; done "
+			- mi cambia il nome da pippo1 a pippopluto1 (sbagliato, ma l'idea e' che li ho cambiati tutti correttamente)
+
+*	bash e' un tipo di shell (sta per BAsic Shell) e per saperne di piu' si puo' usare il comando man bash
+	
+* creo un programma ciao.sh e lo rendo eseguibile con chmod u+x ciao.sh:
+___________________________________________-
+
+#!/bin/bash	#esplicita il fatto che stiamo esprimendo i nostri comandi attraverso le convenzioni bash (per esempio un commento e' con # che precede)
+
+echo ciao
+___________________________________________
+
+
+*	nella shell possiamo definire delle variabili da utilizzare. nome variabile != valore variabile. Per definira una variabile uso 			NOMEVARIABILE="contenutovariabile" per una stringa oppure il valore per un numero #NIENTE SPAZI
+
+_________________________________--
+POLLO="palla'
+COSA=31
+
+echo POLLO
+-> POLLO
+echo $POLLO
+-> palla
+
+echo COSA
+-> COSA
+echo COSA
+-> 31
+_____________________________________
+
+*	attenzione che in ogni caso il contenuto delle variabili e' considerato una stringa, per interpretarlo come numeri servono particolari funzioni
+
+*	una variabile ambiente e' una variabile che e' resa pubblica (disponibile a tutte le shell) attraverso l'uso di export NOMEVARIABILE
+*	le variabili vengono salvate nel file bashrc che viene visualizzato attraverso il comando ~/.bashrc
+
+*	posso amche definire variabili che contengano comandi, per esempio FILES=$(ls) mi permette di usare echo $FILES per usare il comando ls (le 		parentesi servono per raggruppare comandi della shell)
+
+*	posso definire delle variabili contenenti anche delle operazioni aritmetiche sfruttando le doppie parentesi, per esempio:
+
+__________________________________________-
+	somma=$((3+5))
+	echo somma
+	-> 8
+___________________________________________
+
+* cosa utile per le stringhe di testo e i valori alfanumerici
+________________________________---
+
+	NAME=47
+	echo $NAME
+	->47
+	echo $NAMEW
+	->____
+	echo ${NAME}W
+	->47W
+_____________________________________________
+
+
+*provo con un ciclo for ( a partire sempre da una cartella che contiene tre file pippopluto1.txt)
+__________________________________---
+
+	for i in $(ls *.txt); do echo $i; done			//stampo a schermo tutti i files .txt
+	for i in $(ls *.txt); do echo ${i}; done		//le graffe in questo caso non modificano il risultato
+	for i in $(ls *.txt); do echo ${i#pluto}; done		// # mi permette di rimuovere un particolare testo dalle stringhe a partire dalla testa
+	for i in $(ls *.txt); do echo ${i%txt}; done		// % rimuove anche esso un particolare testo, ma rimuove la prima apparizione dalla coda
+______________________________________
+
+
+*	posso allora usare altri comandi al posto di echo (per esempio mv, o cp) per esempio portando da .txt a .dat:
+____________________________________---
+	
+	for i in $(ls *.txt); do mv $i ${i%txt}dat; done
+_____________________________________
+
+
+il programma ciao.sh scritto:
+	
+___________________________________________-
+
+#!/bin/bash	
+
+echo $0 $1 $2
+___________________________________________
+
+se lo eseguo con ./ciao.sh pollo
+-> ./ciao.sh pollo
+
+se uso ./ciao.sh pollo palla
+-> ./ciao.sh pollo palla
+
+
+*	 uso ora un ciclo for applicato a un ciao.sh che contenga solo echo $1
+
+	for ((i=1; i<11; ++i)); do ./ciao.sh $i; done
+
+	mi lascia i numeri da 1 a 10
+
+*	con un ciao.sh diverso e usando la stessa stringa per il prompt ci sono cose interessanti:
+
+ciao.sh:
+_______________________________________-
+
+#!/bin/bash	
+
+parameter=$1
+
+echo $((parameter**2))
+________________________________________
+
+ permette di stampare a testo i quadrati dei numeri che arrivano dal for
+
+per usare i while si usa la forma " while [ ... ] " ma serve che dopo la prima quadra e prima della seconda ci sia uno spazio. inoltr:
+	- == -eq
+	- <= -le
+	
+
+	+ per esempio while [ $i -le 10 ] == while(i<=10)
+
+#############################################################################################
+
+ESERCIZIO: cerca.sh
+___________________________________--
+#!/bin/bash
+
+user=$1
+
+until who | grep "$user" > /dev/null	#il /dev/null e' un "cestino" in cui vengono gettati gli output e presto eliminati in modo da non intasare la 						#memoria
+do
+	echo "utente non collegato"
+	sleep 5s
+done
+echo "finalmente collegato"
+exit 0
+____________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

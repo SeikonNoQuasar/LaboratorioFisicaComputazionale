@@ -1,0 +1,1442 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   
+      <title>What are regular expressions?</title>
+      <link rel="stylesheet" href="corpstyle.css" type="text/css">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+      <link rel="home" href="index.html" title="Shell Scripting">
+      <link rel="up" href="ch03.html" title="Chapter&nbsp;3.&nbsp;Regular Expressions">
+      <link rel="previous" href="ch03.html" title="Chapter&nbsp;3.&nbsp;Regular Expressions">
+      <link rel="next" href="ch03s03.html" title="The tr command">
+   </head>
+   <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+      <div class="navheader">
+         <table width="100%" summary="Navigation header">
+            <tr>
+               <th colspan="3" align="center">What are regular expressions?</th>
+            </tr>
+            <tr>
+               <td width="20%" align="left"><a accesskey="p" href="ch03.html"><img src="../images/navig/prev.gif" alt="Prev"></a>&nbsp;
+               </td>
+               <th width="60%" align="center">Chapter&nbsp;3.&nbsp;Regular Expressions</th>
+               <td width="20%" align="right">&nbsp;<a accesskey="n" href="ch03s03.html"><img src="../images/navig/next.gif" alt="Next"></a></td>
+            </tr>
+         </table>
+         <hr>
+      </div>
+      <div class="sect1" lang="en">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h2 class="title" style="clear: both"><a name="what_are_reg_expr"></a>What are regular expressions?
+                  </h2>
+               </div>
+            </div>
+            <div></div>
+         </div>
+         <p>A regular expression is a pattern matching tool. The pattern can comprise alphanumeric
+                        and non-alphanumeric characters, numbers, letters and digits.
+         </p>
+         <p>Patterns can be used to match certain sequences of characters - almost like a shape
+                        and sort. OK, but what does this actually mean?
+         </p>
+         <p>When doing file manipulations in an earlier chapter, we used patterns. For example,
+                        the splat ( * ) is a pattern that matches 0 or more characters. Thus:
+         </p>
+         <table border="0" bgcolor="#E0E0E0">
+            <tr>
+               <td><pre class="literallayout">
+ls *
+            </pre></td>
+            </tr>
+         </table>
+         <p>matched filenames of 0 or more characters.</p>
+         <p>The splat is a pattern matching either none (0) characters, or 1 character, or 1
+                        character followed by another character (i.e. 2 characters) or 1 character followed by
+                        another and another (i.e. 3 characters) etc., irrespective of what those characters are.
+         </p>
+         <p>Thus, we've had a glimpse of patterns previously, however RE patterns are much more
+                        versatile (and complex) and we want to look at them in detail.
+         </p>
+         <div class="sect2" lang="en">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h3 class="title"><a name="fullstop"></a>The fullstop
+                     </h3>
+                  </div>
+               </div>
+               <div></div>
+            </div>
+            <p>The first of our pattern sequences: a fullstop (or a period as the Americans call
+                               it) matches any character.
+            </p>
+            <p>We might say:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed 's/Linu./LINUX/g' bazaar.txt
+                </pre></td>
+               </tr>
+            </table>
+            <p>This sed expression means:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+s (search for) / Linu.  / (replace with) LINUX / g (globally) &lt;filename to search&gt;
+ ----------^-------^-----------------^---------
+                </pre></td>
+               </tr>
+            </table><a class="indexterm" name="d0e2507"></a><p>Looking at the command in detail: The pattern 'Linu.' says match any set of
+                               characters that begins with a uppercase 'l', followed by <tt class="envar">i</tt>, an 'n'
+                               and a 'u' followed by any other character - the fullstop matches the "any
+                               other character". In the file <b class="filename"><tt>bazaar.txt</tt></b> the following strings appear, that would
+                               match this pattern:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+Linus
+Linux
+                </pre></td>
+               </tr>
+            </table>
+            <p>The pattern we used in the sed above, will match occurrences of Linux and Linus.</p>
+            <p>Using the fullstop in place of 's' or 'x' ensures that these two strings are
+                               matched. However, the pattern will also match:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+Linup
+                </pre></td>
+               </tr>
+            </table>
+            <p>Why? Because it matches the pattern 'Linu' followed by any single character.</p>
+            <div class="important" style="margin-left: 0.5in; margin-right: 0.5in;">
+               <table border="0" summary="Important">
+                  <tr>
+                     <td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../images/admon/important.png"></td>
+                     <th align="left">Important</th>
+                  </tr>
+                  <tr>
+                     <td colspan="2" align="left" valign="top">
+                        <p>The fullstop in regular expression terms matches any character.</p>
+                     </td>
+                  </tr>
+               </table>
+            </div>
+            <p>Pipe the sed expression through nl, and look at line 9 ... "Linus
+                               Torvalds" has been changed to "LINUX Torvalds".
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed 's/Linu./LINUX/g' bazaar.txt | nl
+                </pre></td>
+               </tr>
+            </table>
+         </div>
+         <div class="sect2" lang="en">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h3 class="title"><a name="d0e2535"></a>Let's explore "sed" syntax
+                     </h3>
+                  </div>
+               </div>
+               <div></div>
+            </div>
+            <p>Sed is an acronym for "Stream Editor". The
+                               "stream", in our example above, comes from the file <b class="filename"><tt>bazaar.txt</tt></b>. 
+            </p>
+            <p>Besides the input stream sed must also have a command pattern-command combination.</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+SYNTAX:
+sed [command] / pattern / [replace sequence]  / [modifier] [command]
+                </pre></td>
+               </tr>
+            </table><a class="indexterm" name="d0e2547"></a><p>In this case our command is 's' for search while the pattern we're searching for
+                               is enclosed in forward slashes (forward slashes are not strictly required, but we'll
+                               not going to complicate matters right now).After the second forward slash, we have a
+                               replace sequence.
+            </p>
+            <p>sed will search for a pattern (Linu.) and on finding it, will replace it with the
+                               replace sequence (LINUX).
+            </p>
+            <p>Finally we have a modifier in this case a 'g' meaning "globally"
+                               i.e. search for a pattern and replace it as many times as you find it on a line. If
+                               there were 10 instances of 'Linu&lt;any character&gt;' on a line, it would
+                               replace all occurrences.
+            </p>
+            <p>Since sed is a stream editor, it considers each line in the file <b class="filename"><tt>bazaar.txt</tt></b> independently (in essence, "finish
+                               processing this line, then get the next line from the input file"). The
+                               stream ends when an end-of-file character is reached. Thus the
+                               "globally" modifier only operates on the current line under consideration.
+            </p><a class="indexterm" name="d0e2561"></a><p>If we just wanted to replace only the second instance and not the first or the
+                               third, etc. we could replace the g with a 2. sed would then only replace the second
+                               instance of the desired pattern. As you go through this chapter, you will become
+                               friendly with sed, and work with many patterns. 
+            </p>
+            <p>To Summarise: a fullstop (.) as a regular expression matches any single character.</p>
+            <div class="sect3" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h4 class="title"><a name="d0e2568"></a>Exercises
+                        </h4>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>Using sed and the <b class="filename"><tt>bazaar.txt</tt></b> file,
+                                      write regular expressions to match the following:
+               </p>
+               <div class="orderedlist">
+                  <ol type="1">
+                     <li>
+                        <p>Any word containing the letters "inu" in order.
+                                                       Thus, your RE should match Linux , Linus, linux and linus.
+                        </p>
+                     </li>
+                     <li>
+                        <p>Match only 5 letter words.</p>
+                     </li>
+                     <li>
+                        <p>Write a RE to match only words with an even number of letters up to a
+                                                       maximum of 10 letters.
+                        </p>
+                     </li>
+                     <li>
+                        <p>Replace all the words 'the' with the word "ETH" in
+                                                       the file <b class="filename"><tt>bazaar.txt</tt></b>
+                                                   
+                        </p>
+                     </li>
+                  </ol>
+               </div>
+            </div>
+            <div class="sect3" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h4 class="title"><a name="d0e2592"></a>Challenge sequence
+                        </h4>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>Without redirecting the output to a file, or moving the resulting file, get
+                                      sed to automatically modify the file <b class="filename"><tt>bazaar.txt</tt></b> - i.e. edit the original file. (Hint: RMMG)
+               </p>
+            </div>
+         </div>
+         <div class="sect2" lang="en">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h3 class="title"><a name="d0e2600"></a>Square brackets ( [ ] ), the caret ( ^ ) and the dollar ( $ )
+                     </h3>
+                  </div>
+               </div>
+               <div></div>
+            </div><a class="indexterm" name="d0e2603"></a><a class="indexterm" name="d0e2606"></a><a class="indexterm" name="d0e2609"></a><p>Square brackets mean a range of characters. If we tried [abc], ( you should
+                               remember this from earlier), it means match a single character which is either and
+                               'a' or a 'b' or a 'c'.
+            </p>
+            <p>A caret ( ^ ) matches a start of line and the dollar ( $ ) the end of the line.</p>
+            <p>Now I'm going to use these together to create more complex RE's. We're going to
+                               write a sed expression that's going to match lines (not search and replace as
+                               before, ) that begin with 'a', 'e' or <tt class="envar">i</tt> and print ( p ) them.
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed '/^[aeI]/p' bazaar.txt
+                </pre></td>
+               </tr>
+            </table>
+            <p>You will notice that before we were doing a search-replace, this time around we're
+                               doing a pattern match, but merely printing the matched lines.
+            </p><a class="indexterm" name="d0e2625"></a><p>This regular expression would match lines that begin with either 'a' or 'e' or
+                               <tt class="envar">i</tt>. Now, you'll notice when we ran this command, the lines that begin
+                               with 'a', 'e' or <tt class="envar">i</tt> are printed twice while every non-matching line is
+                               printed only once. sed parsed the entire file, line by line and each time it matched
+                               a line that began with 'a', 'e' or <tt class="envar">i</tt>, the line was printed (which is
+                               why the lines were duplicated). In our example we can see that line 6 begins with an
+                               <tt class="envar">i</tt> - hence a match:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+I believe that most important software....
+                </pre></td>
+               </tr>
+            </table>
+            <p>Similarly, line 8 is also printed twice:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+editor) needed to be built....
+                </pre></td>
+               </tr>
+            </table>
+            <p>How would we match both 'e' and 'E'? Simply include 'E' in the pattern so that the
+                               RE becomes:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed '/^[aeEI]/p' bazaar.txt
+                </pre></td>
+               </tr>
+            </table>
+            <p>This time if you run it, you will notice that line 16 is also matched:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+Extract taken from....
+                </pre></td>
+               </tr>
+            </table>
+            <p>We've seen two things:</p>
+            <div class="orderedlist">
+               <ol type="1">
+                  <li>
+                     <p>that [ ] match a range or choice of characters, and</p>
+                  </li>
+                  <li>
+                     <p>that the caret matches the start of a line.</p>
+                  </li>
+               </ol>
+            </div>
+            <p>Now what makes this slightly more complex is that if this caret appeared inside
+                               the square brackets, it's meaning becomes altered.
+            </p>
+            <p>Examine the following Regular Expression:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed '/^[^aeEI]/p 
+                </pre></td>
+               </tr>
+            </table>
+            <p>This causes every line that does NOT begin with 'a', 'e', 'E' or <tt class="envar">i</tt>
+                               to be printed. What's happening here? Well, the caret inside the square bracket
+                               means "do not match".
+            </p>
+            <p>The caret outside the square bracket says match the start of the line, the caret
+                               inside the square bracket says do not match a,e,E or I. Reading this RE left to right:
+            </p>
+            <p>"any line that starts with NOT an 'a' or an 'e' or an 'E' or and
+                               <tt class="envar">i</tt> - print it".
+            </p>
+            <p>What happens if we replace the 'p' with a 'd'?</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed '/^[^aeEI]/d'
+---------------^
+                </pre></td>
+               </tr>
+            </table>
+            <p>means:</p>
+            <p>"any line that starts with NOT an 'a' or an 'e' or an 'E' or and
+                               <tt class="envar">i</tt> - delete "it".<sup>[<a name="d0e2696" href="#ftn.d0e2696">4</a>]</sup>
+                           
+            </p>
+            <p>Here are the new concepts you've learned:</p>
+            <div class="orderedlist">
+               <ol type="1">
+                  <li>
+                     <p>.We've learnt that we can simply match a pattern without doing a search
+                                                and replace. In the previous example we talked about search and replace
+                                                patterns, now we're talking about matching-only patterns. We do this using a
+                                                straightforward slash without a 's' preceding it. In this case, we operate
+                                                first by printing then by deleting the pattern. Earlier we looked at
+                                                searching and replacing, now we're looking at other operations that sed can
+                                                perform. In essence, "find the pattern accordance with my pattern
+                                                structure and print or delete it".
+                     </p>
+                  </li>
+                  <li>
+                     <p>Secondly, a caret outside a square bracket means "start of
+                                                line", while a caret inside a square bracket means "invert
+                                                the pattern" or more commonly "do NOT match the pattern""
+                     </p>
+                  </li>
+               </ol>
+            </div>
+            <p>Just the same way that the caret means the beginning of the line, the $ means the
+                               end of the line. An expression such as:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed '/[aeEI]$/!d' bazaar.txt
+                </pre></td>
+               </tr>
+            </table>
+            <p>means</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+"don't ( ! ) delete any line that ENDS in either an 'a', an 'e' an 'E' or an 'I'".
+                </pre></td>
+               </tr>
+            </table>
+            <p>We've used the following expressions:</p>
+            <div class="informaltable">
+               <table border="1">
+                  <colgroup>
+                     <col width="50%" align="left">
+                     <col width="50%" align="left">
+                  </colgroup>
+                  <tbody>
+                     <tr>
+                        <td align="left">.</td>
+                        <td align="left">any single character</td>
+                     </tr>
+                     <tr>
+                        <td align="left">[ ]</td>
+                        <td align="left">a range of characters</td>
+                     </tr>
+                     <tr>
+                        <td align="left">^</td>
+                        <td align="left">start of line (when outside [ ])</td>
+                     </tr>
+                     <tr>
+                        <td align="left">^</td>
+                        <td align="left">do not (when inside [ ])</td>
+                     </tr>
+                     <tr>
+                        <td align="left">$</td>
+                        <td align="left">end of line</td>
+                     </tr>
+                  </tbody>
+               </table>
+            </div>
+            <p>Perhaps we want to print only the lines beginning with 'a', 'e', 'E' or <tt class="envar">i</tt>.
+            </p>
+            <p>How can sed achieve this? We could try,</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+"delete all lines NOT beginning with an 'a,e,E or I'"
+
+sed '/^[^aeEI]/d' bazaar.txt
+                </pre></td>
+               </tr>
+            </table>
+            <p>Bingo. However it also produced a series of blank lines. How do we remove blank
+                               lines, leaving only the lines that we are interested in? We could pipe the command
+                               into yet another sed, where we could look for blank lines. The pattern for a blank
+                               line is:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+^$
+                </pre></td>
+               </tr>
+            </table><a class="indexterm" name="d0e2765"></a></div>
+         <div class="sect2" lang="en">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h3 class="title"><a name="d0e2769"></a>Using sed and pipes
+                     </h3>
+                  </div>
+               </div>
+               <div></div>
+            </div>
+            <p>So the following command would delete the unwanted blank lines:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed '/^[^aeEI]/d' bazaar.txt | sed '/^$/d' 
+                </pre></td>
+               </tr>
+            </table><a class="indexterm" name="d0e2776"></a><p>Bingo (again), we end up with the lines we wanted. You might want to pipe this
+                               command through nl just to see the line numbers:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed '/^[^aeEI]/d' bazaar.txt | sed '/^$/d' | nl
+                </pre></td>
+               </tr>
+            </table>
+            <p>Notice that the first sed is acting on a file, while the second sed is acting on a
+                               stream of lines as output by the initial sed. Well we could have actually simplified
+                               this slightly, because sed can accommodate multiple command-pattern-command
+                               sequences is they are separated by a ';' Hence, a modified command: 
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed '/^[^aeEI]/d;/^$/d' bazaar.txt | nl
+ ----------------^----------------------
+[ notice the ^ indicating the ; ]
+                </pre></td>
+               </tr>
+            </table>
+            <p>These examples illustrate two concepts:</p>
+            <div class="orderedlist">
+               <ol type="1">
+                  <li>
+                     <p>How to put multiple sed commands on the same line,</p>
+                  </li>
+                  <li>
+                     <p>It is important to optimise your shell scripts.<sup>[<a name="d0e2798" href="#ftn.d0e2798">5</a>]</sup> In the first example (where we called sed twice) we were
+                                                invoking sed twice, which obviously takes time. In the second instance we're
+                                                invoking sed once, while doing two sets of commands (albeit sequentially)
+                                                thereby optimising our code, naturally making it run significantly quicker.
+                     </p>
+                  </li>
+               </ol>
+            </div>
+            <p>By way of re-enforcing this, run the following commands:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+time sed '/^[^aeEI]/d' bazaar.txt |sed '/^$/d' |nl
+time sed '/^[^aeEI]/d;/^$/d' bazaar.txt |nl
+
+[ the 'time' command will time the commands ]
+                </pre></td>
+               </tr>
+            </table><a class="indexterm" name="d0e2806"></a><p>This will show the elapsed time in addition to a host of other information about
+                               how long this command took to run. In this case since our RE is so simple and the
+                               file we're operating on is so small, the time difference is marginal. If however
+                               this were a 100Mb file, invoking sed twice would be a significant impairment on the
+                               speed with which your script executes.
+            </p>
+            <p>sed is a stream editor, but what's a stream? A stream is just like a river, in
+                               which information is flowing. sed is able to edit the stream as it 'flows' past.
+                               We've been invoking sed using a file as an argument, however we could alternatively
+                               have used sed as part of a pipe :
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+cat bazaar.txt | sed '/^[^aeEI]/d;/^$/d'
+                </pre></td>
+               </tr>
+            </table>
+            <p>This would produce the same results as invoking sed earlier. sed is one of the
+                               commands that you should be comfortable using since it can be used in many and
+                               varied ways. Now, as part of the pipe, sed is searching for a pattern. On finding
+                               the pattern it's modified and sent on to stdout.
+            </p>
+            <div class="sect3" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h4 class="title"><a name="d0e2817"></a>Exercises
+                        </h4>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <div class="orderedlist">
+                  <ol type="1">
+                     <li>
+                        <p>Only print lines that DO NOT have the word Linux in them</p>
+                     </li>
+                     <li>
+                        <p>Remove all blank lines, as well as those that DO NOT have the word
+                                                       Linux in them
+                        </p>
+                     </li>
+                     <li>
+                        <p>Remove any line that begins or ends with a vowel (a,e,i,o,u).</p>
+                     </li>
+                     <li>
+                        <p>Search for the word "bazaar", only printing lines
+                                                       containing the word. Ensure that you search for both
+                                                       "Bazaar" and "bazaar".
+                        </p>
+                     </li>
+                     <li>
+                        <p>Remove all non-blank lines from the file.</p>
+                     </li>
+                  </ol>
+               </div>
+            </div>
+            <div class="sect3" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h4 class="title"><a name="d0e2836"></a>Challenge sequence
+                        </h4>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>Using our bazaar file, print only those lines that end with either a full stop
+                                      ( . ) or a '?'.
+               </p>
+            </div>
+         </div>
+         <div class="sect2" lang="en">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h3 class="title"><a name="d0e2842"></a>The splat (asterisk) ( * )
+                     </h3>
+                  </div>
+               </div>
+               <div></div>
+            </div><a class="indexterm" name="d0e2845"></a><p>The splat (*) matches 0, one or more occurrences <span class="emphasis"><em>OF THE PREVIOUS PATTERN</em></span>.
+            </p>
+            <p>Supposing we wanted to match Line or Linux or Linus the pattern:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed '/Lin.*/p' bazaar.txt	
+                </pre></td>
+               </tr>
+            </table>
+            <p>would match lines containing these words.</p>
+            <p>The splat says "match 0, one or more of the previous pattern (which was
+                               the Full-stop, and the full-stop means one occurrence of any single character)".
+            </p>
+            <p>Lets looks at another example:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+/a*bc[e-g]*[0-9]*/
+                </pre></td>
+               </tr>
+            </table>
+            <p>matches:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+aaaaabcfgh19919234
+bc
+abcefg123456789
+abc45
+aabcggg87310
+                </pre></td>
+               </tr>
+            </table>
+            <p>Let's looks at another example:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+/.*it.$/
+                </pre></td>
+               </tr>
+            </table>
+            <p>matches any number of alphanumeric characters followed by and <tt class="envar">i</tt>
+                               followed by a 't' followed by the end-of-line.
+            </p>
+            <div class="sect3" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h4 class="title"><a name="d0e2880"></a>Exercises
+                        </h4>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>Using the file index.html, available.</p>
+               <p>Match the following RE's</p>
+               <div class="orderedlist">
+                  <ol type="1">
+                     <li>
+                        <p>Look for every line beginning with a '&lt;'. Did it give you what
+                                                       you were expecting? Why?
+                        </p>
+                     </li>
+                     <li>
+                        <p>Modify the above RE to give you EVERY line beginning with a
+                                                       '&lt;'. Now is it giving you what you were expecting? If not, have
+                                                       another look at question 1. Linux people may be lazy, but they think a
+                                                       great deal.
+                        </p>
+                     </li>
+                     <li>
+                        <p>I am only interested in the divider HTML code (the code with
+                                                       "&lt;div" in it). Note that although I have asked
+                                                       you for &lt;div, there may be anomalies in it's case. It could be
+                                                       &lt;Div or &lt;DiV, etc. Ensure your solution gets all of them.
+                        </p>
+                     </li>
+                     <li>
+                        <p>Look for all references to QED. Number each line you find.</p>
+                     </li>
+                     <li>
+                        <p>Show all lines that are headings (H1, H2, H3, etc.). Again case may be
+                                                       an issue.
+                        </p>
+                     </li>
+                  </ol>
+               </div>
+               <p>Let's update our list of patterns:</p>
+               <div class="informaltable">
+                  <table border="1">
+                     <colgroup>
+                        <col width="50%" align="left">
+                        <col width="50%" align="left">
+                     </colgroup>
+                     <tbody>
+                        <tr>
+                           <td align="left">character</td>
+                           <td align="left">pattern</td>
+                        </tr>
+                        <tr>
+                           <td align="left">.</td>
+                           <td align="left">any single character</td>
+                        </tr>
+                        <tr>
+                           <td align="left">[ ]</td>
+                           <td align="left">a range of characters</td>
+                        </tr>
+                        <tr>
+                           <td align="left">^</td>
+                           <td align="left">start of line (when outside [ ])</td>
+                        </tr>
+                        <tr>
+                           <td align="left">^</td>
+                           <td align="left">do not (when inside [ ])</td>
+                        </tr>
+                        <tr>
+                           <td align="left">$</td>
+                           <td align="left">end of line</td>
+                        </tr>
+                        <tr>
+                           <td align="left">*</td>
+                           <td align="left">0 or more of the previous pattern</td>
+                        </tr>
+                        <tr>
+                           <td align="left">+</td>
+                           <td align="left">1 or more of the previous pattern</td>
+                        </tr>
+                        <tr>
+                           <td align="left">\{n\}</td>
+                           <td align="left">&nbsp;</td>
+                        </tr>
+                        <tr>
+                           <td align="left">\{n, \}+</td>
+                           <td align="left">&nbsp;</td>
+                        </tr>
+                        <tr>
+                           <td align="left">\{n,m\}</td>
+                           <td align="left">&nbsp;</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+         <div class="sect2" lang="en">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h3 class="title"><a name="d0e2963"></a>The plus operator ( + )
+                     </h3>
+                  </div>
+               </div>
+               <div></div>
+            </div><a class="indexterm" name="d0e2966"></a><p>The plus operator will match the preceding pattern 1 or more times. To match the
+                               character 'a' or 'b' or 'c', one or more times, we could use:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+[abc+]
+                </pre></td>
+               </tr>
+            </table>
+            <p>Perhaps we want to match 19?? in the <b class="filename"><tt>bazaar.txt</tt></b> file (Here we would want to find any year,
+                               1986 or 1999 whichever you would like to find.)
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+19[0-9+]
+                </pre></td>
+               </tr>
+            </table>
+            <p>To match the character a, one or more times, we would use</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+a+
+                </pre></td>
+               </tr>
+            </table>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+               <table border="0" summary="Note">
+                  <tr>
+                     <td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../images/admon/note.png"></td>
+                     <th align="left">Note</th>
+                  </tr>
+                  <tr>
+                     <td colspan="2" align="left" valign="top">
+                        <p>Note that in the previous examples, the plus character is not matched, since
+                                               this ( + ) has special meaning in a RE. If we wanted to search for a plus sign
+                                               (or any of the RE pattern matching tools) in a pattern, we would need to escape
+                                               the plus sign.
+                        </p>
+                     </td>
+                  </tr>
+               </table>
+            </div>
+            <p>How do we escape characters that are special in RE's? We need to escape them with
+                               a backslash ( \ ). Thus to search for the pattern a+ we would use:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+a\+
+                </pre></td>
+               </tr>
+            </table>
+            <p>Similarly if we wanted to match a splat ( * ), we would have to match it with:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+a\*
+                </pre></td>
+               </tr>
+            </table>
+            <p>So, the plus is a special character, which matches one or more of <span class="emphasis"><em>THE
+                                         PREVIOUS PATTERN.</em></span>
+                           
+            </p>
+            <div class="sect3" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h4 class="title"><a name="d0e3000"></a>Matching a specified number of the pattern using the curly brackets {}
+                        </h4>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>Using {n}, we match exactly that number of the previous expression. If we want
+                                      to match 'aaaa' then we could use:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+a{4}
+                    </pre></td>
+                  </tr>
+               </table>
+               <p>This would match exactly four a's. If we want to match the pattern 1999 in our
+                                      file <b class="filename"><tt>bazaar.txt</tt></b>, then we would do: 
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+sed '/19{3}/p' bazaar.txt
+                    </pre></td>
+                  </tr>
+               </table>
+               <p>This should print all lines containing the pattern 1999 in the <b class="filename"><tt>bazaar.txt</tt></b> file.
+               </p>
+               <p>You will notice that if we try to do this, it doesn't seem to work. This is
+                                      because we need to escape the curly braces by preceding each one with a backslash.
+               </p>
+               <p>If we wanted to match three characters irrespective of what they are (e.g.
+                                      fox, bat, cat, car)?
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+sed \%\&lt;[a-z][a-z][a-z]\&gt;%p' /usr/share/dict/words
+                    </pre></td>
+                  </tr>
+               </table>
+            </div>
+            <div class="sect3" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h4 class="title"><a name="d0e3026"></a>A detour - Using a different field separator in sed pattern matching
+                        </h4>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>I've alluded to this previously, but now here it is in use. While sed will
+                                      normally use the / as the pattern delimiter, any character can be used instead
+                                      of /. This is particularly useful when using sed to modify a
+                                      <tt class="envar">PATH</tt>. For example: supposing we were wanting to search for the
+                                      pattern: 
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+/home/hamish/some_where
+                    </pre></td>
+                  </tr>
+               </table>
+               <p>sed could achieve this, but consider how "complex" the RE
+                                      would be:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+'/\/home\/hamish\/some_where/!d'
+                    </pre></td>
+                  </tr>
+               </table>
+               <p>Confusing? Now rather than using the / as the pattern delimiter, we could use
+                                      a % sign, simplifying the RE to:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+%/home/hamish/some_where%!d
+                    </pre></td>
+                  </tr>
+               </table>
+               <p>This will only work however, if we escape the initial %, making our sed
+                                      statement look like this:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+\%/home/hamish/some_where%!d
+                    </pre></td>
+                  </tr>
+               </table>
+            </div>
+            <div class="sect3" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h4 class="title"><a name="d0e3049"></a>Using Word Encapsulating Characters
+                        </h4>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>I have used the word encapsulation characters here (\&lt; and \&gt;)
+                                      to trap ONLY whole words that are ONLY 3 letters in length. Try 
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+sed 's/.../321/g' bazaar.txt
+                    </pre></td>
+                  </tr>
+               </table>
+               <p>versus</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+sed 's/\&lt;...\&gt;/321/g' bazaar.txt
+                    </pre></td>
+                  </tr>
+               </table>
+               <p>The word encapsulation characters are &lt; and &gt;, but naturally,
+                                      since these hold special meaning in the shell (and in fact in sed too), we need
+                                      to escape them, hence the \&lt; and \&gt;.
+               </p>
+               <p>The second sed should produce closer to what you may have been expecting and
+                                      would match fox, the, bar, bat, its, joe, etc....
+               </p>
+            </div>
+         </div>
+         <div class="sect2" lang="en">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h3 class="title"><a name="d0e3066"></a>Returning from detour to our discussion on curly braces &#8230;
+                     </h3>
+                  </div>
+               </div>
+               <div></div>
+            </div>
+            <p>The above RE ( sed \%\&lt;[a-z][a-z][a-z]\&gt;%p' /usr/share/dict/words )
+                               is a little long, so we could shorten it using the splat to:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed '/\&lt;[a-z]\{3\}\&gt;/p' /usr/share/dict/words
+                </pre></td>
+               </tr>
+            </table>
+            <p>(this may be hard to see that you are in fact getting the results you are after.
+                               You could, instead, not delete words that are 3 charaters in length by replacing the
+                               "p" with a "!d" (don't delete) in the sed
+                               expression above:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed '/\&lt;[a-z]\{3\}\&gt;/!d' /usr/share/dict/words )
+
+sed '/19\{3\}/p' bazaar.txt
+                </pre></td>
+               </tr>
+            </table>
+            <p>The command now executes as expected and only one duplicate line is output from
+                               the file, that which contains the text 1999. So {n} matches exactly n occurrences of
+                               the expression.
+            </p><a class="indexterm" name="d0e3079"></a><p>If we wanted to match a string with a minimum of 4 a's, up to .... well infinity
+                               a's we could use the pattern:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+a\{4,\} 
+                </pre></td>
+               </tr>
+            </table>
+            <p>This regular expression says match no upper limit, but the string must contain at
+                               least four a's. Thus it would match four a's, forty a's or even four hundred a's
+                               following one another, but it would not match three a's. 
+            </p>
+            <p>Let's now match the letter m at least once and with no upper limit. We would do
+                               this by:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed '/m\{1,\}/p' bazaar.txt
+                </pre></td>
+               </tr>
+            </table>
+            <p>If we change the 1 to a 2, our pattern becomes:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed '/m\{2,\}/p' bazaar.txt
+                </pre></td>
+               </tr>
+            </table>
+            <p>This would match only those lines with the words: community, programming etcetera
+                               (i.e. any words containing at least two m's).
+            </p>
+            <p>The following expression would match a minimum of four a's but a maximum of 10 a's
+                               in a particular pattern:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+a\{4,10\}
+                </pre></td>
+               </tr>
+            </table>
+            <p>Let's say we wanted to match any character a minimum of 3 times, but a maximum of
+                               7 times, then we could affect a regular expression like:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+.\{3,7\}
+                </pre></td>
+               </tr>
+            </table>
+            <p>This allows us a huge degree of flexibility when we start combining these operators.</p>
+            <p>What does the following RE match?</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+^[aeEI]\{1,3\}
+                </pre></td>
+               </tr>
+            </table>
+            <p>This RE means: "look for any line that starts with any of the characters
+                               a,e,E,I a minimum of one time but a maximum of 3 times. Thus it would match any of
+                               the following:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+aaa
+a
+aE
+e
+E
+I
+                </pre></td>
+               </tr>
+            </table>
+            <p>Would it match abd or adb or azz for that matter, or only lines that start with
+                               any of the characters in the RE, followed by up to 2 other characters from the RE?
+            </p>
+            <p>It would not match the following:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+aaEI
+EIea
+bEaa
+IIEEaae
+iEE
+                </pre></td>
+               </tr>
+            </table>
+            <p>(why?-- you should answer this.)</p>
+         </div>
+         <div class="sect2" lang="en">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h3 class="title"><a name="d0e3125"></a>RE's are greedy for matching patterns
+                     </h3>
+                  </div>
+               </div>
+               <div></div>
+            </div>
+            <p>If you think this is bizarre, hang in there, it gets more bizarre. Let me finish
+                               off RE's with two concepts. The first is 'greediness'. RE's are greedy, which means
+                               that they will match as much as they possibly can.
+            </p>
+            <p>Assuming you have an expression:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+ham.*
+                </pre></td>
+               </tr>
+            </table>
+            <p>This will match as much as it possibly can within that expression. So it would match</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">	
+ham
+                </pre></td>
+               </tr>
+            </table>
+            <p>but if we had:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+hammock
+                </pre></td>
+               </tr>
+            </table>
+            <p>it will match the entire word hammock, because it tries to grab as much as it
+                               possibly can - it's greedy. RE's are greedy and sometimes they'll be matching a lot
+                               more than you expect them to match. The closer you can get your RE to the actual
+                               thing that you're looking for, the less the greediness will affect your results.
+                               Let's look at some examples of that.
+            </p>
+            <div class="sect3" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h4 class="title"><a name="d0e3144"></a>Exercises
+                        </h4>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>The following exercises will show you how sed's greediness affects the output,
+                                      and how to create RE's that will only give you the results you want.
+               </p>
+               <p>I have included 3 files, emails{1,2,3}.txt in the examples directory you
+                                      should have downloaded these previously.
+               </p>
+               <p>In order to REALLY come to terms with RE's, work through these exercises using
+                                      these 3 files:
+               </p>
+               <div class="orderedlist">
+                  <ol type="1">
+                     <li>
+                        <p>Match the subject lines in these files. Subject lines look as
+                                                           follows:
+                        </p>
+                        <table border="0" bgcolor="#E0E0E0">
+                           <tr>
+                              <td><pre class="literallayout">
+Subject:
+                                </pre></td>
+                           </tr>
+                        </table>
+                        <p>
+                                                   
+                        </p>
+                     </li>
+                     <li>
+                        <p>List only the 'id' of each message. This can be found with the string
+                                                       'id', but there is a catch!
+                        </p>
+                     </li>
+                     <li>
+                        <p>What mail clients have people used?</p>
+                     </li>
+                     <li>
+                        <p>Obtain a listing of all za domains, all com domains, etc in these emails.</p>
+                     </li>
+                     <li>
+                        <p>Given the following RE's what would they match?</p>
+                     </li>
+                  </ol>
+               </div>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+ht\{2\}p:\/\/
+
+
+
+ht\{2\}p:\/\{2\}
+
+
+
+ht\{2\}p:\/\/w\{3\}.*za$
+
+
+
+ht\{2\}p:\/\{2\}.*\/.\{9\}\/
+
+                    </pre></td>
+                  </tr>
+               </table>
+               <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                  <table border="0" summary="Note">
+                     <tr>
+                        <td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../images/admon/note.png"></td>
+                        <th align="left">Note</th>
+                     </tr>
+                     <tr>
+                        <td colspan="2" align="left" valign="top">
+                           <p>You will have noticed that in order to understand these, you have to work
+                                                      through them systematically, left to right, understanding each part as you go!
+                           </p>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+         </div>
+         <div class="sect2" lang="en">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h3 class="title"><a name="d0e3178"></a>Placeholders and word boundaries
+                     </h3>
+                  </div>
+               </div>
+               <div></div>
+            </div><a class="indexterm" name="d0e3181"></a><a class="indexterm" name="d0e3184"></a><p>Placeholders are a way of keeping the pattern that you've matched.</p>
+            <p>In your example files, there's a second file called columns.txt. This file has two columns:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+name		age
+                </pre></td>
+               </tr>
+            </table>
+            <p>I want to swap the two columns around so that the file contains the age column on
+                               the left, and the name column on the right.
+            </p>
+            <p>Now, if you start thinking about how to do that, it might become quite a complex
+                               thing to achieve (without using tools like awk or perl etc.).
+            </p>
+            <p>With RE's and sed, it's very simple using placeholders. So let's first try and
+                               develop a pattern that matches name and a pattern that matches age. Notice that the
+                               two columns in the file are separated by a single space. The expression for the name
+                               column would be:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+[a-z]* 
+                </pre></td>
+               </tr>
+            </table>
+            <p>Assuming that no one in our file is 100 years or older we can use the following
+                               expression to match the values of the age column:
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+[0-9]\{1,2\}
+                </pre></td>
+               </tr>
+            </table>
+            <p>That should match any age (in the file) because it means match any digit in the
+                               range 0-9 a minimum of once but a maximum of twice. So it should match a person
+                               whose age is: 1, 9 or 99.
+            </p>
+            <p>Now the sed expression would then be:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed '/^[a-z]* [0-9]\{1,2\}$/p'
+                </pre></td>
+               </tr>
+            </table>
+            <p>This only searches for lines matching and prints them.</p>
+            <p>How do I swap the name and the age around? I'm going to enclose the name in round
+                               brackets (remember you have to escape round brackets). Similarly I'm going to
+                               enclose the age expression in round brackets.
+            </p>
+            <p>Our sed expression now looks like:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed 's/^\([a-z]*\) \([0-9]\{1,2\}\)$/\2,\1/' columns.txt
+----^__------__^__------------__^-__-___
+       1 2   3     4 5 6         7           8 9 10  11
+
+	1 = Caret (start of line)
+	2 = Start of placeholder for the name RE
+	3 = Name RE
+	4 = End placeholder for the name RE
+	5 = Space between the name and the age in the file
+	6 = Start placeholder for the age RE
+	7 = The Age RE
+	8 = End placeholder for the age RE
+	9 = Dollar (end of line)
+	10= Placeholder 2 (the age)
+	11= Placeholder 1 (the name)
+                </pre></td>
+               </tr>
+            </table>
+            <p>The first set of round brackets contains the 'name' RE, while the second set of
+                               round brackets enclose the 'age' RE. By encompassing them in round brackets, I've
+                               marked the expressions within placeholders. We could then use \2 to represent the
+                               'age' placeholder, and \1 to represent the 'name' placeholder. Essentially this
+                               expression says "search for the name and age, and replace it with the age
+                               and then name". Thus we've switched the two columns.
+            </p>
+            <p>The above final expression looks very complex but I tackled this regular
+                               expression in byte-size chunks.
+            </p>
+            <p>I said let's write a regular expression to match the name. Now let's write a
+                               regular expression to match the age. Once I had these two individual expressions, I
+                               combined them. When I combined them into a single regular expression I then just
+                               included round brackets to create placeholders. Later in sed, we were able to use
+                               these placeholders in our search-replace expression. Now try and do that in other
+                               operating systems!
+            </p>
+            <p>Try these:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+free | sed '/^Mem/!d'
+free | sed '/^Mem/!d';  '/  */,/g'
+VAR=`free | sed '/^Mem/!d';  '/  */,/g'`
+echo $VAR
+                </pre></td>
+               </tr>
+            </table>
+         </div>
+         <div class="sect2" lang="en">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h3 class="title"><a name="d0e3231"></a>Word boundaries ( &lt; and &gt; ) - a formal explanation
+                     </h3>
+                  </div>
+               </div>
+               <div></div>
+            </div>
+            <p>A final useful trick is that of word boundaries. We've seen them a little earlier,
+                               but here is a formal explanation. Suppose we are wanting to search for all words 'the':
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed 's/the/THE/g' bazaar.txt
+                </pre></td>
+               </tr>
+            </table>
+            <p>would probably be our first try. Problem is, this will also match (and change)
+                               'there', 'them', 'then', 'therefore', etc. Problem, yes?
+            </p>
+            <p>Solution? Well, the solution is to bound our word with word boundary markers (the
+                               official term is word anchors).
+            </p>
+            <p>Let's rewrite our pattern with this in mind:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+sed 's/\&lt;the\&gt;/THE/g' bazaar.txt
+                </pre></td>
+               </tr>
+            </table>
+            <p>This time, we only match the whole word 'the' and not any of the others. So the
+                               word anchors will restrict the pattern to complete words and not segments of words.
+            </p>
+            <div class="sect3" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h4 class="title"><a name="d0e3248"></a>Exercises:
+                        </h4>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>The following exercises can be used on any of the text files in your
+                                      directory. See if you can work out what will be matched before using sed to do
+                                      it for you.
+               </p>
+               <div class="orderedlist">
+                  <ol type="1">
+                     <li>
+                        <p>s/the/THE/g</p>
+                     </li>
+                     <li>
+                        <p>s/\&lt;the\&gt;/THE/g</p>
+                     </li>
+                     <li>
+                        <p>s/\(.*\)@\(.*\)/\2 user \1/g</p>
+                     </li>
+                     <li>
+                        <p>s/\([-a-zA-Z0-9\.]*\)@\([-a-zA-Z0-9\.]*\)/\2 .. \1/g</p>
+                     </li>
+                     <li>
+                        <p>s/\([-a-zA-Z0-9\.]*\)@\([-a-zA-Z0-9\.]*\)/&lt;&lt;&lt;\2&gt;&gt;&gt;
+                                                       .. [[[\1]]]/g
+                        </p>
+                     </li>
+                  </ol>
+               </div>
+               <p>It may be a good place to pause and tell you about the best editor ever
+                                      written - vi. If you aren't familiar with it, get hold of VIM (the Improved
+                                      version of vi.)
+               </p>
+            </div>
+         </div>
+         <div class="footnotes"><br><hr width="100" align="left">
+            <div class="footnote">
+               <p><sup>[<a name="ftn.d0e2696" href="#d0e2696">4</a>] </sup>the <span><b class="command">d</b></span> command in sed means delete the line if there is
+                                          a match
+               </p>
+            </div>
+            <div class="footnote">
+               <p><sup>[<a name="ftn.d0e2798" href="#d0e2798">5</a>] </sup> Since the shell is a command interpreter it does not compile the
+                                                  script. Since it is not pre-compiled the shell interprets every
+                                                  command it encounters.
+               </p>
+            </div>
+         </div>
+      </div>
+      <div class="navfooter">
+         <hr>
+         <table width="100%" summary="Navigation footer">
+            <tr>
+               <td width="40%" align="left"><a accesskey="p" href="ch03.html"><img src="../images/navig/prev.gif" alt="Prev"></a>&nbsp;
+               </td>
+               <td width="20%" align="center"><a accesskey="u" href="ch03.html"><img src="../images/navig/up.gif" alt="Up"></a></td>
+               <td width="40%" align="right">&nbsp;<a accesskey="n" href="ch03s03.html"><img src="../images/navig/next.gif" alt="Next"></a></td>
+            </tr>
+            <tr>
+               <td width="40%" align="left" valign="top">Chapter&nbsp;3.&nbsp;Regular Expressions&nbsp;</td>
+               <td width="20%" align="center"><a accesskey="h" href="index.html"><img src="../images/navig/home.gif" alt="Home"></a></td>
+               <td width="40%" align="right" valign="top">&nbsp;The tr command</td>
+            </tr>
+         </table>
+      </div>
+   </body>
+</html>

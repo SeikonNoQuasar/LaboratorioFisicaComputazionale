@@ -1,0 +1,118 @@
+Lex04		(wwwteor.mi.infn.it/~vicini/lezioni1112/mathematica_1.html)
+
+
+*	Posso definire delle funzioni con f[x_] := espressione, per esempio f[x_] := a x^2 + b x + c
+	potremo poi richiamare la funzione attraverso il comando f[ ] mettendo all'interno la variabile (per esempio f[3] o f[y])
+
+*	il comando " % " richiama l'ultimo output dato, mentre %numero mi richiama il comando al numero "numero"
+
+*	se definisco una funzione in questo modo: g[_] := x^2 invece, la mia funzione g mi dara' sempre x^2, non viene considerata la variabile che
+	assegno. cioe' f[x_]=x^2 => f[2]==4, invece g[_]=x^2 => g[4]==x^2
+
+*	l-operatore := si chiama SetDelayed, ovvero assegna un valore solo nel momento in cui vado a valutare il valore contenuto nella variabile. In
+	pratica se uso s:= 7, al momento s non contiene 7, ma se poi uso come input s allora me la valuta come 7.
+
+	--> utilizzi utili
+
+	In: f[x_] := a x^2 + b x + c
+	In: a=2, b=2, c=2;
+	In: g[x_] = a x^2 + b x + c
+	Out: 2 + 2 x + 2 x^2
+
+	se invece uso 
+	In: f[y]
+	Out: 2 + 2 y + 2 y^2
+	In: Clear[a,b,c]
+	In: g[y]
+	Out: 2 + 2 y + 2 y^2
+	In: f[y]	
+	Out: a x^2 + b x + c
+	--------------------
+
+	-----------> Altri pratici utilizzi
+
+	In: h[n_] = Normal[ Series[ Sin[x], {x,0,n}]]	//in praticam sto chiedendo di darmi lo sviluppo in serie si seno fino all'ordine n 
+	Out: problemi
+	In: h[n_] := Normal[ Series[ Sin[x], {x,0,n}]]	//qui invece chiedo si salvare una funzione che arrivi fino ad un certo n 
+	In: [h5]						// e infatti qui funziona perche' gli do l'ordine a cui fermarsi
+	Out: Sviluppo fino all'ordine 5
+	---------------------
+
+*	esiste la funzione Random[] che crea numeri casuali (tra 0 e 1). Se uso r = Random[] mi crea un numero a caso e lo assegna a r, se uso r := Random[] invece,
+	ogni volta che chiamo r crea un nuovo numero casuale e lo mette in r
+
+*	Posso calcolare la derivata di una funzione attraverso la funzione D[funzione, variabile]. La derivata n-esima si calcola mettendo una
+	graffa al secondo membro: D[ funzione, {variabile, ordine}]
+
+*	Posso anche esplicitare il differenziale di una funzione attraverso la funzione Dt : 
+
+	In: Dt[ Sin[x^2+y^2+t^2], t]
+	Out: cos()+ 2 t + 2 x Dt[x,t] + 2 y Dt[y,t]
+
+*	posso usare f''[x] per definire una derivata seconda rispetto alla variabile interna x (penso valga solo per funzioni ad una variabile)
+*	Series[f, {x, x, n}] con: Series[ funzione, {variabile, punto in cui centro lo sviluppo, ordine}]
+
+*	Ponendo " Normal " davanti alle varie funzioni come Series dico al math di calcolare solo le parti calcolabili (toglie il resto di ordine
+	maggiore)
+
+
+*	Nei fogli di matematica esiste l-operatore Do, che raccoglie al suo interno una serie di comandi e condizioni (quanti se ne vuole) tra parentesi
+	
+	Do[
+		calcolo
+
+		If[accuratezza,
+		   Print["ordine necessario=", i];
+		   Break[]
+		];
+
+
+	 {i, 1, 12}
+	];
+	
+
+*	Per calcolare le primitive esiste la funzione Integrate[ funzione, variabile]
+
+*	NOTA: tutte queste funzioni mi danno un'espressione letterale delle varie funzioni, per valutarle in una particolare x0 devo costruire questo
+	integrale letterale e poi sostituire x con il valore, attraverso /.x->x0 . altrimenti mi dara' errore
+
+
+
+#################### SECONDA PARTE ---- SHELL SCRIPTING		(wwwteor.mi.infn.it/~vicini/lezioni1112/lezione_4_bash.html)
+
+*	ho scaricato degli script e salvati nella cartella script
+
+*	guarda e pensa su: ciao.sh, ciclo.sh, count.sh, test.sh, eatout.sh (*), submath, 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

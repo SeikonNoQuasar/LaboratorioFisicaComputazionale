@@ -1,0 +1,207 @@
+Lezione 11
+
+####################### Parte unica C++
+
+#### LIBRI UTILI: effective c++ - Scott Meyers
+
+	* ci si aspetta che la classe base sia un'interfaccia guida di cosa deve fare poi una cosa specifica.
+	* non serve, anzi spesso è controproducente, andare a implementare i vari metodi
+
+pure.cpp
+_________________________________________________
+
+struct instrument{
+	virtual void tune() const = 0;	// l'aggiunta dell' =0 è quello che rende la funzione puramente virtuale
+	virtual void play() const = 0;
+};
+
+struct  piano : intrument{
+	void tune() const {};	//ovverriding -> implementazione
+	void play() const {};	//se provo a non mettere questa funzione il compilatore mi darà errore (fpure virtual f)
+};
+
+int main(){
+	//instrument a;		//devo per forza commentare questo o avrò errori in compile-time
+	piano p;
+}
+__________________________________________________
+
+	* il fatto di aver messo anche solo una funzione virtuale pura implica che la mia classe sarà una classe
+	ASTRATTA, che quindi non mi permette di istanziare oggetti di quel tipo. Per esempio nel caso superiore, usare
+	instrument p;
+	nel main mi darebbe errore.
+
+	* volendo posso fornire un'implementazione delle funzioni pure all'esterno della classe astratta. A quel punto
+	posso anche non sovrascrivere le funzioni nelle classi figlie e queste assumono l'implementazione esterna (non
+	posso comunque istanziare oggetti della classe astratta)
+
+pure.cpp
+_________________________________________________
+
+struct instrument{
+	virtual void tune() const = 0;	// l'aggiunta dell' =0 è quello che rende la funzione puramente virtuale
+	virtual void play() const = 0;
+};
+
+void instrument::tune() const {};
+void instrument::play() const {};
+
+struct  piano : intrument{
+	void tune() const {
+	instrument::tune();
+};	//ovverriding -> implementazione
+	void play() const {};	//se provo a non mettere questa funzione il compilatore mi darà errore (fpure virtual f)
+};
+
+int main(){
+	//instrument a;		//devo per forza commentare questo o avrò errori in compile-time
+	piano p;
+}
+__________________________________________________
+
+
+	Riassumendo:
+	- funzione virtuale pura (non implementata) => pura interfaccia (obbligo di implementare)
+	- funzione virtuale pura (implementata) => helper function da usare come codice comune
+	- funzione virtuale non pura (implementazione di default) => non obbligo di nuova implementazione
+	- funzione non virtuale => da non ri-implementare
+
+
+
+virtualDTOR.cpp
+________________________________________________________________-
+
+#include<iostream>
+using namespace std;
+
+struct base{
+	base() { cout << "base()" << endl;}
+	virtual ~base(){ cout << "~base()" << endl;}
+};
+
+//derivata che gestisce una risorsa
+struct derived : public base {
+	int *pi;
+	derived(){
+		pi = new int[10];
+		cout << "derived()" << endl;
+	}
+	~derived(){
+		delete[] pi;
+		cout << "~derived()" << endl;
+	}
+};
+
+int main(){
+	derived d;
+	base * pb = new derived;
+	delete pb; //phirst blood
+}
+_________________________________________________________________
+
+
+	Ereditarietà privata:
+	- Non implementa il concetto di "is-a"
+	- implementa il concetto di "is-implemented-in-terms-of"
+
+
+####################################################################################################
+
+
+	TEMPLATES
+	- programmare senza dover specificare i tipi che sto gestendo.
+
+
+
+	i templates nascono dalla necessità di creare container di vari tipi diversi. voglio costruire uno stampo per
+	definire tipi simili tra loro, senza definire un tipo (ovvero senza costruire una classe)
+
+	
+templates.cpp
+__________________________________________________________________
+
+class mypair{	//voglio un qualcosa che mi permetta di creare coppie, senza a priore dire di cose.
+		//parametrizzo un tipo T, nel senso che non esiste un tipo di nome t, ma fa da placeholder
+private:
+	T x_,y_;
+public:
+	mypair(T x, T y) : x_(x), y_(y) {};
+	T get_x(){ return x_;}
+	T get_y(){ return y_;}
+};
+__________________________________________________________________
+
+	questa cosa ovviamente non funziona. c++ mi RICHIEDE che il specifichi i tipi, e T non esiste. il compilatore
+	riconosce che T sia un tipo, ma non sa cosa sia.
+
+	nasce allora il tipo "template" == Modello, che si implementa nella forma:
+
+	template<typename T>
+
+	(senza punto e virgola). provo a farne un utilizzo:
+
+templates.cpp
+_______________________________________________________________________
+
+templates<typename T>
+class mypair{	//voglio un qualcosa che mi permetta di creare coppie, senza a priore dire di cose.
+		//parametrizzo un tipo T, nel senso che non esiste un tipo di nome t, ma fa da placeholder
+private:
+	T x_,y_;
+public:
+	mypair(T x, T y) : x_(x), y_(y) {};
+	T get_x(){ return x_;}
+	T get_y(){ return y_;}
+};
+
+struct widget{
+};
+
+int main(){
+	mypair<double> p(3.2,2.1);				//sono due tipi diversi
+
+	widget w1,w2;
+	mypair<widget> p1(w1,w2);	//
+}
+________________________________________________________________________
+
+
+
+se uso template<typename T = int> sto dando un tipo di default che mi permette di usare la stringa:
+
+mypair<> pi(2,3);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,320 @@
+Lez09		
+
+########### esercizi mathematica
+
+- sistemi di equazioni (sistemi1.m e sistemi2.m)
+
+	- esiste la funzione MatrixRank[] che mi restituisce l'ordine della matrice (ovvero se e' una matrice quadrata nxn mi dice quanto vale n)
+
+- potenziale centrale (potcentrale.m)
+
+
+##################### SECONDA PARTE ( C++ )
+
+Overloading operatori:
+	- gli operatori sono i segni come +. *, /, etc (ma anche la freccia dei puntatori e l'asterisco della referenza)
+	- gli operatori si comportano come funzioni dalla sintassi particolare e sono implementati alla base della libreria standard
+	- farne l'overloading significa ampliarne la possibilita' di applicazione, ovvero ci permette di usare la somma tra due elementi che per esempio
+		abbiamo creato noi (come per esempio due classi)
+
+operators.cpp
+__________________________________________________
+__// overloadinf operatori
+
+class number{
+	int i_;
+public:
+	// Number() : i_(0){}; //inutile dato che ho aggiunto "int i = 0" nel costruttore qui sotto. che se viene chiamato senza argomento, allora 
+					// inizializza a zero
+	Number(int i=0):i_(i){};	//valore di default
+	int get() const{ return i_;}
+};
+
+number operator+ (const number & lhs /* left hand side*/, const number & rhs /*right hand side*/){		//posso definirlo all'esterno della 
+					[...]										//classe
+	}
+
+int main(){
+	number a(3), b(5), c;
+	a+b;		//il compilatore non conosce questa sintassi, devo allora definirla
+			// a + b == operator+(a,b)
+}
+______________________________________________
+
+- operator puo' essere del tipo referenza o del tipo copia. Quello che importa davvero e' che abbia scope tale per cui esista laddove viene chiamata
+	(ovvero se restituisco una referenza, voglio che esiste quando la uso nel main). In questo caso non vale la pena usare la  referenza per operator
+	(number & operato=(){} ), considero infatti il fatto che dentro operator creero' un tmp in cui mettere il risultato, ma allora se uso una
+	referenza, tmp muore alla fine dello scope e la referenza rifereira' a nulla (anche se potrei risolvere questo problema con un new, ma non
+	so poi come eliminarlo
+
+
+__________________- esempi sbagliati
+
+	number & operator + (number & lhs, number & rhs){
+		number tmp;
+		return tmp;		//uscendo dallo scope viene eliminato, ergo non restituisco nulla in realta'
+	}
+
+	number & operator+ (number & lhs, number & rhs){
+		number * ptmp = new number;
+		return (*ptmp);		//chi lo cancella??
+	}
+____________________________________
+	
+
+	operators.cpp
+__________________________________________________
+__// overloading operatori
+
+#include<iostream>
+using namespace std;
+
+class number{
+	int i_;
+public:
+	// Number() : i_(0){}; //inutile dato che ho aggiunto "int i = 0" nel costruttore qui sotto. che se viene chiamato senza argomento, allora 
+					// inizializza a zero
+	Number(int i=0):i_(i){};	//valore di default
+	int get() const{ return i_;}
+};
+
+// Operatori che non hanno side-effects (ovvero passa qualcosa e restituisce un valore)
+number operator+ (const number & lhs /* left hand side*/, const number & rhs /*right hand side*/){		//posso definirlo all'esterno della 
+	return number(lhs.get() + rhs.g());									//classe
+	}
+
+int main(){
+	number a(3), b(5);
+	a+b;		//il compilatore non conosce questa sintassi, devo allora definirla
+			// a + b == operator+(a,b)
+	cout << (a+b).get() << endl;
+}
+______________________________________________
+
+	una funzione ha side effects quando viene modificato qualcosa che le passo o un membro (per esempio i set)
+
+	Se invece voglio implementare operator all'interno della classe:
+_________________________________________________
+// overloading operatori
+//
+//binario non-membro -> due parametri
+//binario membro -> un parametro
+//unario non/membro -> un parametro
+//unario membro -> nessun parametro
+
+//operatore ternario a?b:c -> non si puo` fare overloading
+
+#include<iostream>
+using namespace std;
+
+class number{
+	int i_;
+public:
+	// Number() : i_(0){}; //inutile dato che ho aggiunto "int i = 0" nel costruttore qui sotto. che se viene chiamato senza argomento, allora 
+					// inizializza a zero
+	Number(int i=0):i_(i){};	//valore di default
+	int get() const{ return i_;}
+	number operator+ (const number & rhs){				//posso definirlo all'interno della classe
+		return number(this->i_ + rhs.i_);
+	}
+	
+};
+
+/*
+// Operatori che non hanno side-effects (ovvero passa qualcosa e restituisce un valore)
+number operator+ (const number & lhs , const number & rhs ){		//posso definirlo all'esterno della classe
+	return number(lhs.get() + rhs.g());				//lhs = left hand side, rhs = right hand side					
+	}
+*/
+
+int main(){
+	number a(3), b(5);
+	a+b;		//il compilatore non conosce questa sintassi, devo allora definirla
+			// a + b == operator+(a,b)
+	cout << (a+b).get() << endl;		//in entrambi i casi viene usato cosi`
+}
+______________________________________________
+
+	per altre info sull'overloading cerca su wikipedia "Operators in C and C++"
+
+********* ora esempio con un operatore con side-effects
+
+	sideeffects.cpp 
+______________________________________________________
+// overloading operatori con side-effects
+//
+// tipicamente operatori con side-effects restituiscono referenze all'oggetto modificato
+
+#include<iostream>
+using namespace std;
+
+class number{
+	int i_;
+public:
+	// Number() : i_(0){}; //inutile dato che ho aggiunto "int i = 0" nel costruttore qui sotto. che se viene chiamato senza argomento, allora 
+					// inizializza a zero
+	Number(int i=0):i_(i){};	//valore di default
+	int get() const{ return i_;}
+	
+	void operator= 	(const number & rhs){		//DEVE ESSERE MEMBRO! (perche' operatore speciale)
+		i_ = rhs.i_;
+	}	
+
+};
+
+int main(){
+	number a(3), b(5), c;
+	cout << c.get() << endl;
+	c=a;
+	cout << c.get() << endl;
+	
+	/*
+	number a(3), b(5), c;
+	
+	c=a=b;			// mi richiede di cambiare il tipo di operator= in number o number & ( e in entrambi i casi deve finire con return this
+				// oppure return *this) questa cosa ha associativita' a destra, ovvero e' come scrivere c = (a = b); (il tutto funziona
+				//per copie e non per referenze. non e' permesso scrivere (c = a) = b; a meno che io non abbia messo la referenza nel
+				//tipo di operator=
+	cout << c.get() << endl;
+	*/
+	
+}
+_________________________________________________________
+
+	l'operatore uguale e' uno dei pochi che in realta' viene reso in overloading in automatico, per le classi semplici cio' e' corretto, ma in 
+	generale e' sempre una buona idea scriverlo se lo si vuole usare per essere sicuri non ci siano errori.
+
+
+***********************************
+
+	sugar.cpp
+___________________________________
+
+#include<iostream>
+using namespace std;
+
+int main(){
+
+	int n = 10;
+
+	while(n --> 0) {		//questa cosa funziona perche' in realta' si comporta come (n-- > 0)
+		cout << n << endl;
+	}
+
+}
+___________________________________
+
+
+
+************************************ ARGOMENTO NUOVO!!!!!!! OMFG!!!!!!!!!!!!
+
+ereditarieta'...  oh...
+
+
+inherit.cpp
+__________________________________________
+
+#include<iostream>
+usign namespace std;
+
+struct complex{
+	double re,im;
+};
+
+void print(complez z){
+	cout << z.re << " + i " << z.im << endl;
+}
+
+//////////////////////////////////////////////////
+
+// con la composizione (metto un complex dentro mycomplex), la relazione e' di tipo "has-a"
+// con l'ereditarieta' si ha una relazione di tipo "is-a" (ovvero mycomplex si comporta esattamente come fosse un complex)
+
+struct mycomplex : public complex {	//public sta per "eredita la parte pubblica di "
+	double get_r2(){
+		return (re*re - im*im);
+	}
+}:
+
+int main(){
+	mycomplex mc;
+	print(mc);
+}
+_____________________________________________________
+
+
+	ereditarieta' attraverso i costruttori
+CTOR.cpp
+_____________________________________________________
+
+#include<iostream>
+using namespace std;
+
+struct base {
+	int i;
+	base() {cout << "BASE" << endl;}
+	~base(){cout << "~BAAAASE" << endl;}
+};
+
+struct derived : public base {
+	double d;
+	derived() { cout << "DERIIIIIIVED" << endl;}
+	~derived(){ cout << "~DERIVED" << endl;}
+};
+
+int main(){
+
+	//costruttori e distruttori vengono eseguiti sia per la base che per la derivata, in modo ANNIDATO
+	derived d;
+
+}
+______________________________________________
+
+considero ora i membri privati:
+
+veicolo.cpp
+_____________________________________________
+
+class veicolo{
+private:
+	int nruote_;
+protected:			//privato per tutti tranne che per chi eredita
+	double d;
+public:
+	veicolo(int i) : nruote_(i) {};
+};
+
+struct moto : public veicolo {
+	moto() : veicolo(2) {}		//non potrei usare nruote_=2 perche' nruote_ e` privato in veicolo.
+}
+
+int main(){
+
+}
+_____________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

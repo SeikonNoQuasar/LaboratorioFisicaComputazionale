@@ -1,0 +1,1256 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   
+      <title>Chapter&nbsp;4.&nbsp;Practically Shell Scripting</title>
+      <link rel="stylesheet" href="corpstyle.css" type="text/css">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+      <link rel="home" href="index.html" title="Shell Scripting">
+      <link rel="up" href="index.html" title="Shell Scripting">
+      <link rel="previous" href="ch03s08.html" title="The grep command">
+      <link rel="next" href="ch05.html" title="Chapter&nbsp;5.&nbsp;Using Quotation marks in the Shell">
+   </head>
+   <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+      <div class="navheader">
+         <table width="100%" summary="Navigation header">
+            <tr>
+               <th colspan="3" align="center">Chapter&nbsp;4.&nbsp;Practically Shell Scripting</th>
+            </tr>
+            <tr>
+               <td width="20%" align="left"><a accesskey="p" href="ch03s08.html"><img src="../images/navig/prev.gif" alt="Prev"></a>&nbsp;
+               </td>
+               <th width="60%" align="center">&nbsp;</th>
+               <td width="20%" align="right">&nbsp;<a accesskey="n" href="ch05.html"><img src="../images/navig/next.gif" alt="Next"></a></td>
+            </tr>
+         </table>
+         <hr>
+      </div>
+      <div class="chapter" lang="en">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h2 class="title"><a name="Practically_Shell_Scripting"></a>Chapter&nbsp;4.&nbsp;Practically Shell Scripting
+                  </h2>
+               </div>
+            </div>
+            <div></div>
+         </div>
+         <div class="toc">
+            <p><b>Table of Contents</b></p>
+            <dl>
+               <dt><span class="sect1"><a href="ch04.html#d0e4312">Section Techniques to use when writing, saving and executing Shell Scripts</a></span></dt>
+               <dd>
+                  <dl>
+                     <dt><span class="sect2"><a href="ch04.html#d0e4349">Detour: File Extension labels </a></span></dt>
+                     <dt><span class="sect2"><a href="ch04.html#d0e4418">Comments in scripts</a></span></dt>
+                     <dt><span class="sect2"><a href="ch04.html#d0e4444">Variables</a></span></dt>
+                     <dt><span class="sect2"><a href="ch04.html#d0e4512">Shebang or hashpling #!</a></span></dt>
+                     <dt><span class="sect2"><a href="ch04.html#d0e4592">Exit</a></span></dt>
+                     <dt><span class="sect2"><a href="ch04.html#d0e4614">Null and unset variables</a></span></dt>
+                     <dt><span class="sect2"><a href="ch04.html#d0e4693">Variable Expansion</a></span></dt>
+                     <dt><span class="sect2"><a href="ch04.html#d0e4748">Environmental vs shell variables</a></span></dt>
+                     <dt><span class="sect2"><a href="ch04.html#d0e4788">Arithmetic in the shell</a></span></dt>
+                     <dt><span class="sect2"><a href="ch04.html#d0e4915">Examples</a></span></dt>
+                     <dt><span class="sect2"><a href="ch04.html#d0e4950">Exercises:</a></span></dt>
+                  </dl>
+               </dd>
+            </dl>
+         </div>
+         <div class="sect1" lang="en">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="d0e4312"></a>Section Techniques to use when writing, saving and executing Shell Scripts
+                     </h2>
+                  </div>
+               </div>
+               <div></div>
+            </div>
+            <p>Let's understand a couple of things about shell scripting. Firstly it's almost
+                           impossible to write a script top-down, start at one end, finish at the other end -
+                           unless of course you are Bill Joy or Linus Torvalds!
+            </p>
+            <p>The way I like to tackle shell scripting is to take things in byte-size chunks. You
+                           will have gathered this from the <span><b class="command">grep</b></span>, sed, sort and cut examples. We
+                           took things in byte-size chunks.
+            </p>
+            <p>So when you're writing a script, my advice to you is to start at the command line,
+                           refine the sed, RE, <span><b class="command">grep</b></span> and sort statements until they do what you
+                           want. Then once they are working, insert them into a script.
+            </p>
+            <p>Refining your script on the command line will reduce the amount of time you spend in
+                           debugging the script. If you don't do it this way, you may end up with a script that
+                           doesn't work and you'll spend more time trying to debug the script, than actually
+                           getting the job done.
+            </p>
+            <p>The command lines we are working on are getting more complex and they will become even
+                           more complex before we're done here.
+            </p>
+            <p>In the meantime, let's take a simple example. We want to write a script to produce the
+                           unique shells. Well, we've done most of the hard work here already, recall
+            </p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+cut -d: -f7 /etc/passwd |sort -u 
+            </pre></td>
+               </tr>
+            </table><a class="indexterm" name="d0e4336"></a><p>And that produced the output that we were after. How do we put that into a script?</p>
+            <p>Edit a file:</p>
+            <table border="0" bgcolor="#E0E0E0">
+               <tr>
+                  <td><pre class="literallayout">
+vi script.sh
+            </pre></td>
+               </tr>
+            </table>
+            <p>Insert the command onto the first line and save your file.</p>
+            <div class="sect2" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="d0e4349"></a>Detour: File Extension labels 
+                        </h3>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>Let's understand a couple of things about Linux. Linux doesn't care about
+                                  extensions, it's not interested in what the extension of this particular file is. My
+                                  advice however, is for your reference (i.e. for the sake of readability), to append
+                                  an .sh on the end of every shell script file. That will immediately alert you to the
+                                  fact that this file is a script without having to perform any operation on the file.<sup>[<a name="d0e4354" href="#ftn.d0e4354">13</a>]</sup>
+                              
+               </p>
+               <p>Of course if you don't do that, it doesn't make any difference, it will still be a
+                                  script. But my convention, (there are as many conventions as there are system
+                                  administrators and Linux distributions) encourages the .sh on the end of a script
+                                  file name. This tells me in no certain terms that this is meant to be a script.
+               </p>
+               <p>At this point we should be able to run that script. So type the following on the
+                                  command line:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+script.sh 
+                </pre></td>
+                  </tr>
+               </table>
+               <p>When you do that, you will notice the following error:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+script.sh: Command not found. 
+                </pre></td>
+                  </tr>
+               </table>
+               <p>The reason that the command is not found is that it looks in your search
+                                  <tt class="envar">PATH</tt> for this "new" command.
+               </p>
+               <p>Of course your <tt class="envar">PATH</tt> hopefully (if you're a halfway decent system
+                                  administrator) doesn't have a '.' in it. In other words your <tt class="envar">PATH</tt>
+                                  doesn't include your current directory.
+               </p><a class="indexterm" name="d0e4384"></a><p>In order to run this script you need to precede the script by the
+                                  <tt class="envar">PATH</tt> to the script. Thus:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+./script.sh
+                </pre></td>
+                  </tr>
+               </table>
+               <p>When you do this, it still won't run! Why? You haven't changed the script to be
+                                  executable. The way that you do this is:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+chmod +x script.sh
+                </pre></td>
+                  </tr>
+               </table><a class="indexterm" name="d0e4398"></a><p>From thereon, the script is interpreted as an executable file and you can rerun
+                                  that script by using the following command:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+./script.sh 
+                </pre></td>
+                  </tr>
+               </table>
+               <p>You have to make every script executable with the chmod command. If you don't
+                                  change its mode, it won't run. Every time you run it, it will show you a list of
+                                  unique shells that are being used by your system.
+               </p>
+               <p>You could give other users access to this script, or you could place this script
+                                  in relevant home directories so that it could be executed.
+               </p>
+               <p>Or you could put it into a place on the system that everybody has access to (e.g. /usr/bin).<sup>[<a name="d0e4411" href="#ftn.d0e4411">14</a>]</sup>
+                              
+               </p>
+            </div>
+            <div class="sect2" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="d0e4418"></a>Comments in scripts
+                        </h3>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>It's important, now that you're learning to write scripts (which will ultimately
+                                  take you on to writing programs and ultimately to becoming a fully-fledged open
+                                  source developer), that you document your scripts well.
+               </p>
+               <p>Since we're all such good programmers we will definitely want to do this. How? We
+                                  can put comments in our scripts using a hash (#) to show that a particular line is a comment.
+               </p><a class="indexterm" name="d0e4425"></a><p>Edit script.sh as follows:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+vi script.sh
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Insert a hash or two at the top of this file and write a comment about what this
+                                  script does, who wrote it, when you wrote it and when it was last updated.
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+# Student name - written February 2004.
+# A script to produce the unique shells using the /etc/passwd file
+
+cut -d: -f7 /etc/passwd |sort -u 
+
+
+
+
+
+
+: w script.sh
+
+                </pre></td>
+                  </tr>
+               </table>
+               <p>This is the bare minimum comment you should make in a script. Because even if you
+                                  don't maintain your scripts, there's a good chance that somebody in the future will
+                                  have to; and comments go a long way to proving that you're a capable coder.
+               </p>
+               <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                  <table border="0" summary="Note">
+                     <tr>
+                        <td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../images/admon/note.png"></td>
+                        <th align="left">Note</th>
+                     </tr>
+                     <tr>
+                        <td colspan="2" align="left" valign="top">
+                           <p> It's a vital part of open source - to provide documentation. Comments can
+                                                  appear anywhere in a file, even after a command, to provide further information
+                                                  about what that particular command does.
+                           </p>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+            <div class="sect2" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="d0e4444"></a>Variables
+                        </h3>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>Variables are a way of storing information temporarily. For example I may create a
+                                  variable called NAME and I assign it a value of "Hamish":<sup>[<a name="d0e4449" href="#ftn.d0e4449">15</a>]</sup>
+                              
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+NAME="Hamish"
+                </pre></td>
+                  </tr>
+               </table><a class="indexterm" name="d0e4455"></a><p>A couple of conventions that we need to follow: variables usually appear in
+                                  uppercase, for example I have assigned to a variable called 'NAME' the value
+                                  'Hamish'. My variable name is in uppercase. There is no white space between the
+                                  variable name ('NAME') and the equals sign.
+               </p>
+               <p>Similarly, without any white space enclose the value in double quotes. This
+                                  process allocates space (memory) within the shell calling the reserved memory
+                                  'NAME', and allocates the value 'Hamish' to it.
+               </p>
+               <p>How do we use variables?</p>
+               <p>In this case, we will use the echo command to print the output to the screen.</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+echo "Hello $NAME"
+                </pre></td>
+                  </tr>
+               </table>
+               <p>which would print:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+Hello Hamish
+                </pre></td>
+                  </tr>
+               </table>
+               <p>to the screen. We could create a file with:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+touch $NAME
+                </pre></td>
+                  </tr>
+               </table>
+               <p>This would create a file called 'Hamish', or else type:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+rm $NAME
+                </pre></td>
+                  </tr>
+               </table>
+               <p>which would remove a file called 'Hamish'. Similarly, we could say:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+vi $NAME
+                </pre></td>
+                  </tr>
+               </table>
+               <p>which would open the file 'Hamish' for editing. In general, we assign a variable with:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+NAME=value
+                </pre></td>
+                  </tr>
+               </table>
+               <p>And we can use the variable in a variety of ways.</p>
+               <p>Does the variable have to be a single string? No, we could've assigned a variable with:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+HELLO="Hello World"
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Please set this variable from the command line and then test the following :</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+touch $HELLO
+                </pre></td>
+                  </tr>
+               </table>
+               <p>List your directory to see what it has produced.</p>
+               <p>Remove the file using the variable name:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+rm $HELLO
+                </pre></td>
+                  </tr>
+               </table>
+               <p>What happens? Why?</p>
+               <p>So setting a variable is a case of assigning it using an equals sign.</p>
+               <p>Using a variable is achieved by preceding the variable name with a dollar sign.</p>
+               <p>As I indicated, the convention is to keep the variable name uppercase, however we
+                                  don't necessarily need to adhere to it. My advice is to stick with the convention
+                                  and keep them uppercase.
+               </p>
+            </div>
+            <div class="sect2" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="d0e4512"></a>Shebang or hashpling #!
+                        </h3>
+                     </div>
+                  </div>
+                  <div></div>
+               </div><a class="indexterm" name="d0e4515"></a><a class="indexterm" name="d0e4520"></a><p>So far we've written very simple scripts. Our scripts have entailed simply an echo
+                                  statement and maybe one other command. In order to achieve a higher degree of
+                                  complexity, we need to tell the script what shell it's going to run under. 
+               </p>
+               <p>One might find that a little strange because we're already running a shell, so why
+                                  do we need to tell the script what shell to run as? Well perhaps, even though we're
+                                  running the bash as our default shell, users of this script may not be running the
+                                  bash as their default shell. There are a couple of ways of forcing this script to
+                                  run under the bash shell. One means of running our script using the bash may be:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+sh script.sh
+                </pre></td>
+                  </tr>
+               </table>
+               <p>This would execute the script using the bourne shell (sh). This looks like a lot
+                                  of work to repeat every time - insisting on the shell at the prompt. So instead, we
+                                  use a shebang.
+               </p>
+               <p>A shebang is really just a sequence of two characters - a hash sign followed by an
+                                  exclamation mark. It looks like this: 
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+#!
+                </pre></td>
+                  </tr>
+               </table>
+               <p>This is known as the shebang. Comments also start with a hash, but because this
+                                  particular comment starts at the top of your script, and is followed immediately by
+                                  a bang (an exclamation mark), it's called the shebang. Directly after the shebang,
+                                  we tell the script what interpreter it should use.
+               </p>
+               <p>If we had the following line at the top of our script:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+#!/bin/ksh
+                </pre></td>
+                  </tr>
+               </table>
+               <p>This would run the contents of script.sh using the korn shell. To run the script
+                                  using the bash we would have:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+#!/bin/bash
+                </pre></td>
+                  </tr>
+               </table>
+               <p>If this was a perl program, we would start the script off with:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+#!/usr/local/bin/perl
+                </pre></td>
+                  </tr>
+               </table>
+               <p>A sed:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+#!/bin/sed
+                </pre></td>
+                  </tr>
+               </table>
+               <p>All subsequent commands would then be treated as if they were sed commands. Or
+                                  perhaps we want to use awk:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+#!/bin/awk
+                </pre></td>
+                  </tr>
+               </table><a class="indexterm" name="d0e4559"></a><a class="indexterm" name="d0e4564"></a><a class="indexterm" name="d0e4569"></a><a class="indexterm" name="d0e4574"></a><a class="indexterm" name="d0e4579"></a><p>This assumes awk lives in our /bin directory. It might live in /usr/bin in which
+                                  case it would be: 
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+#!/usr/bin/awk
+                </pre></td>
+                  </tr>
+               </table>
+               <p>So we can include the shebang at the top of every script, to indicate to the
+                                  script what interpreter this script is intended for.
+               </p>
+               <p>While we have not included the shebang at the top of scripts written thus far, I'd
+                                  encourage you to do so for the sake of portability. Meaning that the script will run
+                                  correctly, wherever it is run.
+               </p>
+            </div>
+            <div class="sect2" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="d0e4592"></a>Exit
+                        </h3>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>We've seen a standard way of starting a script (the shebang), now I need to tell
+                                  you about the standard way of ending a script.
+               </p>
+               <p>Before we do that, we must understand what exit values are. Every program in Linux
+                                  that completes successfully will almost always exit with a value of 0 - to indicate
+                                  that it's completed successfully. If the program exits with anything other than 0,
+                                  in other words, a number between 1 - 255, this indicates that the program has not
+                                  completed successfully.
+               </p>
+               <p>Thus, on termination of every script, we should send an exit status to indicate
+                                  whether the script has completed successfully or not. Now if your script gets to the
+                                  end and it does all the commands that it's supposed to do correctly, the exit status
+                                  should be zero (0). If it terminated abnormally, you should send an exit status of
+                                  anything but zero. I will therefore end every script with the command:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+exit 0 
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Thus, if no error is encountered before the end of the shell, the exit value will
+                                  be zero.
+               </p><a class="indexterm" name="d0e4605"></a><p>Exit statuses also come in useful when you're using one script to call another. In
+                                  order to test whether the previous script completed successfully, we could test the
+                                  exit status of the script.
+               </p>
+               <p>This is discussed in more detail later <a href="ch06s03.html#SS_exit" title="Exit status of the previous command">the section called &#8220;Exit status of the previous command&#8221;</a>
+                              
+               </p>
+            </div>
+            <div class="sect2" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="d0e4614"></a>Null and unset variables
+                        </h3>
+                     </div>
+                  </div>
+                  <div></div>
+               </div><a class="indexterm" name="d0e4617"></a><a class="indexterm" name="d0e4620"></a><p>There are some variables that need special attention, namely NULL and unset variables.</p>
+               <p>For example, if a variable called NAME was assigned with the following:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+NAME=""
+                </pre></td>
+                  </tr>
+               </table>
+               <p>then the variable is set, but has a NULL value. We could have said:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+NAME=
+                </pre></td>
+                  </tr>
+               </table>
+               <p>which too would have meant a NULL value. These are distinctly different from:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+NAME=" "
+                </pre></td>
+                  </tr>
+               </table>
+               <p>A space between quotes is no longer a NULL value. So if you assign:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+NAME="hamish"
+                </pre></td>
+                  </tr>
+               </table>
+               <p>this has a non-NULL value, while if you assign nothing to the NAME variable it's a
+                                  NULL value. This distinction can sometimes catch you out when you're programming in
+                                  the shell especially when doing comparisons between values. If the variable NAME
+                                  were never set, a comparison like:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+if [ $NAME = "hamish" ]; then
+....
+                </pre></td>
+                  </tr>
+               </table>
+               <p>would return an error, as the test command requires a variable = value comparison.
+                                  In the case of the NULL/unset variable it would test:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+[ = "hamish" ]
+                </pre></td>
+                  </tr>
+               </table>
+               <p>which would be an error.</p>
+               <p>One method of handling NULL values in scripts, is to enclose the value in
+                                  quotation marks, or surround them with "other characters". To
+                                  display a NULL value NAME,
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+echo $NAME
+                </pre></td>
+                  </tr>
+               </table>
+               <p>would return a blank line. Compare this to:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+echo :$NAME:
+                </pre></td>
+                  </tr>
+               </table>
+               <p>which would return</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+::
+                </pre></td>
+                  </tr>
+               </table>
+               <p>since the value is NULL. This way we can clearly see that a NULL value was
+                                  returned. Another method of checking for NULL values in expressions is as follows:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+if [ "${NAME}x" = "x" ]; then
+.....
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Here, if NAME is unset (or NULL), then:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+"${NAME}x" would be "x"
+                </pre></td>
+                  </tr>
+               </table>
+               <p>and the comparison would be TRUE, while if</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+NAME="hamish"
+                </pre></td>
+                  </tr>
+               </table>
+               <p>then</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+"${NAME}x" would be "hamishx"
+                </pre></td>
+                  </tr>
+               </table>
+               <p>and thus the comparison would be FALSE.</p>
+               <p>What happens is if the value is not set at all? For example, what occurs if you
+                                  unset a variable:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+unset NAME
+                </pre></td>
+                  </tr>
+               </table>
+               <p>A similar result to the NULL variable occurs, and we can treat it in the same was
+                                  as a NULL variable.
+               </p>
+               <p>In sum then, the unset/NULL variables are very different from a variable that has
+                                  an empty string as in
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+VAR="      "
+                </pre></td>
+                  </tr>
+               </table>
+            </div>
+            <div class="sect2" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="d0e4693"></a>Variable Expansion
+                        </h3>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>Similarly, another question is: When does the shell do the interpretation of a variable?</p>
+               <p>In the statement:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+echo $NAME
+                </pre></td>
+                  </tr>
+               </table>
+               <p>it does the $NAME variable substitution first before invoking the echo command.</p>
+               <p>What happens if we typed:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+file="*"
+ls $file
+                </pre></td>
+                  </tr>
+               </table>
+               <p>The output is equivalent to saying:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+ls *
+                </pre></td>
+                  </tr>
+               </table>
+               <p>What happened in our example above? The variable file is being interpreted first,
+                                  it then gets an asterisk (splat) which matches all files in the current directory
+                                  and lists those files on the command line.
+               </p>
+               <p>This illustrates that substitution of the variable occurs first, before any
+                                  further command is executed.
+               </p>
+               <p>What happens if I want to echo the following string?</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+hamishW
+                </pre></td>
+                  </tr>
+               </table>
+               <p>and my name variable NAME is currently set to 'hamish'? Can I do this:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+echo $NAMEW
+                </pre></td>
+                  </tr>
+               </table>
+               <p>What's going to happen here?</p>
+               <p>The shell attempts to look for a variable NAMEW which clearly does not exist, but
+                                  there is a variable NAME.
+               </p>
+               <p>How do we make a distinction between the variable name and anything we want to
+                                  follow the variable name? The easiest way to do that, is to use the curly brackets:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+{}
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Trying that again, we could write:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+echo ${NAME}W
+                </pre></td>
+                  </tr>
+               </table>
+               <p>and the shell will now interpret the {NAME} as the shell variable and understand
+                                  that 'W' is not part of the variable name.
+               </p>
+               <p>In essence:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+$NAME
+                </pre></td>
+                  </tr>
+               </table>
+               <p>is equivalent to</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+${NAME}
+                </pre></td>
+                  </tr>
+               </table>
+               <p>They achieve the same purpose, the only distinction between them is if one added a
+                                  'W' to the second example, it would not be considered as part of the variable name.
+               </p>
+            </div>
+            <div class="sect2" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="d0e4748"></a>Environmental vs shell variables
+                        </h3>
+                     </div>
+                  </div>
+                  <div></div>
+               </div><a class="indexterm" name="d0e4751"></a><a class="indexterm" name="d0e4754"></a><p>Since we're covering the topic of variables, now is a good time to make a
+                                  distinction between environment and shell variables. Environment variables are set
+                                  for every shell, and are generally set at login time. Every subsequent shell that's
+                                  started from this shell, get a copy of those variables. So in order to make:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+NAME="Hamish" 
+                </pre></td>
+                  </tr>
+               </table>
+               <p>an environmental variable, we must export the variable:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+export NAME
+                </pre></td>
+                  </tr>
+               </table>
+               <p>By exporting the variable, it changes it from a shell variable to an environment variable.</p>
+               <p>What that implies, is that every subsequent shell (from the shell in which we
+                                  exported the variable) is going to have the variable NAME with a value 'Hamish'.
+                                  Every time we start a new shell, we're going to have this variable set to this
+                                  value. It should go on and on like that. By exporting it, that's what we call an
+                                  environment variable.
+               </p>
+               <p>If a variable is not exported, it's called a shell variable and shell variables
+                                  are generally local to the current shell that we're working in.
+               </p>
+               <p>In other words, if we set a variable:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+SURNAME="Whittal"
+                </pre></td>
+                  </tr>
+               </table>
+               <p>and at the prompt we now say:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+bash 
+                </pre></td>
+                  </tr>
+               </table>
+               <p>starting a new shell, then:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+echo $SURNAME
+                </pre></td>
+                  </tr>
+               </table>
+               <p>It will return a blank line. Why is there a blank line? Primarily because that
+                                  shell variable wasn't exported from the previous shell to the new shell and is thus
+                                  not an environmental variable. Shell variables are only available in the original
+                                  shell where we issue the assignment of the variable.
+               </p>
+               <p>We now have an understanding of variables, how we can set them and, in the next
+                                  chapter we will look at quoting, specifically how we can run commands and assign the
+                                  output of those commands to variables.
+               </p>
+            </div>
+            <div class="sect2" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="d0e4788"></a>Arithmetic in the shell
+                        </h3>
+                     </div>
+                  </div>
+                  <div></div>
+               </div><a class="indexterm" name="d0e4791"></a><p>We've done basic shell scripting, but it would be nice to be able to do some basic
+                                  arithmetic in the shell. While the shell is able to do basic integer arithmetic, it
+                                  cannot do floating-point arithmetic. However, there are some ways of getting around
+                                  this limitation. If we wanted to do floating point arithmetic we can use a utility
+                                  called: 
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+bc
+                </pre></td>
+                  </tr>
+               </table>
+               <p>which is a calculator.</p><a class="indexterm" name="d0e4802"></a><p>We will have a chance to look at this later in the course. If you need to do lots
+                                  of floating point arithmetic - I think you need to take a step up from this course
+                                  and do a perl, Java or C course.
+               </p>
+               <p>Let's concentrate on integer arithmetic.</p>
+               <p>There are a number of ways of doing integer arithmetic in the shell. The first is
+                                  to enclose your expression in double round brackets:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+$(())
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Assuming you set a shell variable <tt class="envar">i</tt>:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+I=10
+                </pre></td>
+                  </tr>
+               </table>
+               <p>You could then say:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+$((I=I+5))
+echo $I
+                </pre></td>
+                  </tr>
+               </table>
+               <p>It would return:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+15
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Arithmetic operators are as follows:</p>
+               <div class="informaltable">
+                  <table border="1">
+                     <colgroup>
+                        <col width="50%" align="left">
+                        <col width="50%" align="left">
+                     </colgroup>
+                     <tbody>
+                        <tr>
+                           <td align="left">Arithmetic operators</td>
+                           <td align="left">action </td>
+                        </tr>
+                        <tr>
+                           <td align="left">+</td>
+                           <td align="left">addition</td>
+                        </tr>
+                        <tr>
+                           <td align="left">-</td>
+                           <td align="left">subtraction</td>
+                        </tr>
+                        <tr>
+                           <td align="left">*</td>
+                           <td align="left">multiplication</td>
+                        </tr>
+                        <tr>
+                           <td align="left">/</td>
+                           <td align="left">division</td>
+                        </tr>
+                        <tr>
+                           <td align="left">%</td>
+                           <td align="left">modulus (to obtain the remainder)</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <p>Read the man pages (<span><b class="command">man 1 bash</b></span> or <span><b class="command">info</b></span>) to
+                                  find out about others. Within these $(()), you could do:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+$((I=(15*I)-26))
+                </pre></td>
+                  </tr>
+               </table>
+               <p>By enclosing stuff inside round brackets within the arithmetic operator, you can
+                                  change the precedence. The precedence within the shell is the good, old BODMAS
+                                  (Brackets, Order, Division, Multiplication, Addition, Subtraction - see <a href="http://www.easymaths.com/What_on_earth_is_Bodmas.htm" target="_top">http://www.easymaths.com/What_on_earth_is_Bodmas.htm</a> ).
+               </p>
+               <p>So, the shell does honour the BODMAS rules.</p><a class="indexterm" name="d0e4884"></a><p>Changing the order of the expression requires brackets.</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+$((J=I+5))
+J=$((I+5))
+J=$(( I + 5 ))
+$(( J = I + 5 ))
+                </pre></td>
+                  </tr>
+               </table>
+               <p>all mean the same thing.</p>
+               <p>However, the following will produce errors due to the spaces surrounding the '=':</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+J = $(( I + 5 ))
+                </pre></td>
+                  </tr>
+               </table>
+               <p>We could, for example say:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+I=$((k&lt;1000))
+                </pre></td>
+                  </tr>
+               </table>
+               <p>What would happen here? This function would result in a true(0) or false(1) value
+                                  for I.
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+If k&lt;1000 then i=0 (true), but if k&gt;=1000 then i=1 (false). 
+                </pre></td>
+                  </tr>
+               </table>
+               <p>You can do your operations like that, assuming that you have calculated the value
+                                  of k before this step.
+               </p>
+               <p>Although we currently do not have sufficient knowledge to perform loops, (we'll
+                                  see later on how we use loops <a href="ch08.html" title="Chapter&nbsp;8.&nbsp;Loops">Chapter&nbsp;8</a>), I've included a
+                                  pseudo-code loop here to illustrate how shell arithmetic can be used practically:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+COUNT=0
+loop until COUNT=10
+    COUNT=$((COUNT+1))
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>COUNT, the variable, starts at 0, and increments by 1 each time round the loop. On
+                                  count reaching 10, the loop exits.
+               </p>
+            </div>
+            <div class="sect2" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="d0e4915"></a>Examples
+                        </h3>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>Practically let's use the df command to do some examples. We're going to create a
+                                  script called mydisk.sh. 
+               </p>
+               <p>At the top of your script include the shebang relevant to your shell, and at the
+                                  end include your exit status.
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+#!/bin/sh
+# This script will squeeze all spaces from the df command.
+#
+# First set the date and time
+DATE=20031127
+TIME=09:52
+
+# Now squeeze the spaces from df
+df -h|tr -s ' '
+
+# We're done - no errors - exit 0
+exit 0
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Let's work this in sizeable bite-chunks. If you remember:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+df -h|tr -s ' '
+                </pre></td>
+                  </tr>
+               </table>
+               <p>will pipe the diskfree output (size, percentage free and mount points) in human
+                                  readable form to the translate command which will then squeeze multiple sequential
+                                  spaces into a single space, giving:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+/dev/hda6 3.8G 2.9G 744M 80% /
+/dev/hda9 12G 10G 1.1G 90% /mnt
+/dev/hda5 3.8G 2.5G 1.0G 70% /debian
+
+df -h | tr -s ' ' | tr ' ' ',' | sed '/^\/dev/!d'; \
+
+/dev/hda6,3.8G,2.9G,744M,80%,/
+/dev/hda9,12G,10G,1.1G,90%,/mnt
+/dev/hda5,3.8G,2.5G,1.0G,70%,/debian
+                </pre></td>
+                  </tr>
+               </table>
+               <p>From the output of the df command we are only interested in the partition that the
+                                  device is on (in this example, da0s1{aeh} - nice to know RE's hey!), the size, the
+                                  percentage free and the mount point in that order:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+mount point,part,size,%free
+
+df -h|tr -s ' '|tr ' ' ','|sed '/^\/dev/!d; \
+
+s%/dev/\(hda[1-9]\+\),\([0-9]\+\.\?[0-9]\?[GMK]\?\),.*%\1;\2%g
+-^_____^----^_____^--^_^-----^_^-^_^----_^_____-^-		^^^^^__-^_^
+-1-----2----3----4---5-6-----7-8-9-1-----1------1-11111---1-2
+-----------------------------------0-----1------2-34567---9-0
+
+1=Start of search using the % not the / since / are in the RE
+2=(hda) Start of the group (to match the hdaX on your linux machine)
+3=(hda[0-9]). Match the range hda1, hda4, hda12, etc. 
+- Note hda10 will not be matched here. Why not?
+4=Match 0 or more of them (i.e. match hda3 or hda11)
+5=Follow the hdaX by a comma
+6=Start of the group 12G or 3.8G. Match a 0-9
+7=Match 0-9 one or more times
+8=Followed by an optional full stop (\.\?)
+9=Optional full stop. See 8 above.
+10=Followed immediately by an optional number (e.g. the .8 in 3.8)
+11=The optional number in 10 above.
+12=Followed by a G, K or M for Gigabytes, Kilobytes of Megabytes,
+Optionally...
+13=End of group to match the 3.8G or the 12G
+14=Followed by a comma
+15=Followed by anything
+16=Zero or more times (for 15 above)
+17=End of pattern started in 1
+18=First placeholder (the hdaX)
+19=Second placeholder (the 3.8G, 12G, etc.)
+20=End of RE.
+
+--This command looks like the following when it is printed on one line:--
+df -h |tr -s ' '|tr ' ' ','|sed '/^\/dev/!d; s%/dev/\hda/\(hda[1-9]\+\),\([0-9]\+.\?[GMK]\?\),.*%\1;2%g'
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Phew. I'll leave you to modify the RE to encompass all other fields we need. It's
+                                  really not that difficult, just a little tricky.
+               </p>
+               <p>As you remember we must make this script executable before we can run it, so:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+chmod +x mydisk.sh
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Now, let's run the script:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+./mydisk.sh
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Have you got the result we are after?</p>
+               <p>Of course, we could have achieved the above RE with a cut command, but there are
+                                  even better ways of skinning this cat. Stay tuned.
+               </p>
+            </div>
+            <div class="sect2" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="d0e4950"></a>Exercises:
+                        </h3>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>Ensure the following for you scripts:</p>
+               <div class="orderedlist">
+                  <ol type="a">
+                     <li>
+                        <p>Each script exits with the correct exit value</p>
+                     </li>
+                     <li>
+                        <p>The script will invoke the right shell, in my case /bin/bash</p>
+                     </li>
+                     <li>
+                        <p>The scripts are well documented</p>
+                     </li>
+                     <li>
+                        <p>Wherever possible, use variables.</p>
+                     </li>
+                  </ol>
+               </div>
+               <p>None of these scripts should be longer than 10 lines (at the outside)</p>
+               <div class="orderedlist">
+                  <ol type="1">
+                     <li>
+                        <p>Write a script that will print:</p>
+                        <p>Hello &lt;yourname&gt;</p>
+                     </li>
+                     <li>
+                        <p>Write a script to show ONLY the <span><b class="command">uptime</b></span> of the machine,
+                                                   as well as the number of users currently logged onto the machine. Use the
+                                                   <span><b class="command">uptime</b></span> command.
+                        </p>
+                     </li>
+                     <li>
+                        <p>Write a script that will take a variable 'COUNT' and double its value,
+                                                   printing both the original number and the doubled value.
+                        </p>
+                     </li>
+                     <li>
+                        <p>Write a script that will show your processes, their ID and their parent
+                                                   ID's, and what terminal it is owned by, but nothing else. <span class="emphasis"><em>Hint:
+                                                             use the <span><b class="command">ps -l</b></span> command.</em></span>
+                                               
+                        </p>
+                     </li>
+                     <li>
+                        <p>Write a script to show who is currently logged on, from where, when they
+                                                   logged in and what they are doing. <span class="emphasis"><em>Hint: Use the
+                                                             <span><b class="command">w</b></span> command.</em></span>
+                                               
+                        </p>
+                     </li>
+                  </ol>
+               </div>
+            </div>
+         </div>
+         <div class="footnotes"><br><hr width="100" align="left">
+            <div class="footnote">
+               <p><sup>[<a name="ftn.d0e4354" href="#d0e4354">13</a>] </sup>of course, you could just as easily have run:
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+file script
+                            </pre></td>
+                     </tr>
+                  </table> which would have informed you that this file
+                                          (script) as a Bourne Shell text executable - a script
+               </p>
+            </div>
+            <div class="footnote">
+               <p><sup>[<a name="ftn.d0e4411" href="#d0e4411">14</a>] </sup>Remember that you're looking at a fairly sensitive file, <b class="filename"><tt>/etc/passwd</tt></b>, so you might not really want your
+                                          users to gain access to this file, or it's contents 
+               </p>
+            </div>
+            <div class="footnote">
+               <p><sup>[<a name="ftn.d0e4449" href="#d0e4449">15</a>] </sup>Setting variables in the korn shell is identical to the Bourne and
+                                          Bourne-Again or BASH shells.
+               </p>
+            </div>
+         </div>
+      </div>
+      <div class="navfooter">
+         <hr>
+         <table width="100%" summary="Navigation footer">
+            <tr>
+               <td width="40%" align="left"><a accesskey="p" href="ch03s08.html"><img src="../images/navig/prev.gif" alt="Prev"></a>&nbsp;
+               </td>
+               <td width="20%" align="center"><a accesskey="u" href="index.html"><img src="../images/navig/up.gif" alt="Up"></a></td>
+               <td width="40%" align="right">&nbsp;<a accesskey="n" href="ch05.html"><img src="../images/navig/next.gif" alt="Next"></a></td>
+            </tr>
+            <tr>
+               <td width="40%" align="left" valign="top">The grep command&nbsp;</td>
+               <td width="20%" align="center"><a accesskey="h" href="index.html"><img src="../images/navig/home.gif" alt="Home"></a></td>
+               <td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;5.&nbsp;Using Quotation marks in the Shell</td>
+            </tr>
+         </table>
+      </div>
+   </body>
+</html>

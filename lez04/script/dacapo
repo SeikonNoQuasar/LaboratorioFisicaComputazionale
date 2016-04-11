@@ -1,0 +1,2 @@
+#!/bin/bash
+(sleep 1s; time /Applications/Mathematica\ 5.0.app/Contents/MacOS/MathKernel <$1.m)> $1.out &

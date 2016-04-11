@@ -1,0 +1,1060 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   
+      <title>Chapter&nbsp;8.&nbsp;Loops</title>
+      <link rel="stylesheet" href="corpstyle.css" type="text/css">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+      <link rel="home" href="index.html" title="Shell Scripting">
+      <link rel="up" href="index.html" title="Shell Scripting">
+      <link rel="previous" href="ch07s04.html" title="Debugging your scripts">
+      <link rel="next" href="ch08s02.html" title="getopts Using arguments and parameters ">
+   </head>
+   <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+      <div class="navheader">
+         <table width="100%" summary="Navigation header">
+            <tr>
+               <th colspan="3" align="center">Chapter&nbsp;8.&nbsp;Loops</th>
+            </tr>
+            <tr>
+               <td width="20%" align="left"><a accesskey="p" href="ch07s04.html"><img src="../images/navig/prev.gif" alt="Prev"></a>&nbsp;
+               </td>
+               <th width="60%" align="center">&nbsp;</th>
+               <td width="20%" align="right">&nbsp;<a accesskey="n" href="ch08s02.html"><img src="../images/navig/next.gif" alt="Next"></a></td>
+            </tr>
+         </table>
+         <hr>
+      </div>
+      <div class="chapter" lang="en">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h2 class="title"><a name="SS_Loops"></a>Chapter&nbsp;8.&nbsp;Loops
+                  </h2>
+               </div>
+            </div>
+            <div></div>
+         </div>
+         <div class="toc">
+            <p><b>Table of Contents</b></p>
+            <dl>
+               <dt><span class="sect1"><a href="ch08.html#SS8_Introduction">Introduction</a></span></dt>
+               <dd>
+                  <dl>
+                     <dt><span class="sect2"><a href="ch08.html#for_loop">The "for" loop</a></span></dt>
+                     <dt><span class="sect2"><a href="ch08.html#while_until_loops">while and until loops</a></span></dt>
+                  </dl>
+               </dd>
+               <dt><span class="sect1"><a href="ch08s02.html">getopts Using arguments and parameters </a></span></dt>
+               <dd>
+                  <dl>
+                     <dt><span class="sect2"><a href="ch08s02.html#d0e7170">Exercises:</a></span></dt>
+                  </dl>
+               </dd>
+            </dl>
+         </div>
+         <div class="sect1" lang="en">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="SS8_Introduction"></a>Introduction
+                     </h2>
+                  </div>
+               </div>
+               <div></div>
+            </div><a class="indexterm" name="d0e6642"></a><p>Looping is an integral part of any programming language, and equally so in the shell.</p>
+            <p>The shell has three types of loops:</p>
+            <div class="orderedlist">
+               <ol type="1">
+                  <li>
+                     <p>for loops</p>
+                  </li>
+                  <li>
+                     <p>while loops</p>
+                  </li>
+                  <li>
+                     <p>until loops</p>
+                  </li>
+               </ol>
+            </div><a class="indexterm" name="d0e6659"></a><a class="indexterm" name="d0e6662"></a><a class="indexterm" name="d0e6665"></a><p>Each loop has a slightly different purpose.</p>
+            <div class="sect2" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="for_loop"></a>The "for" loop
+                        </h3>
+                     </div>
+                  </div>
+                  <div></div>
+               </div>
+               <p>Let's start with the for loop, which has the following syntax:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+for variable in list
+do
+	...
+	...
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>A more specific example of this case is:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+for i in 1 2 3 4
+do
+	echo ${i}
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>If you run the above, you will get four numbers printed to the output:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+1
+2
+3
+4
+                </pre></td>
+                  </tr>
+               </table>
+               <p>So the for loop says:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+"for every element in the list (1,2,3,4 in our case) do something (echo $i in our case)"
+                </pre></td>
+                  </tr>
+               </table>
+               <p>In this example, we are just echoing the output. No rocket science there, but it's
+                                  a good means of introducing us to for loops.
+               </p>
+               <p>The lists could be anything, they could say:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+for NAME in hamish heidi matthew riaan simone
+do
+	echo "people involved in this project: "
+	echo $NAME
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>This would produce:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+people involved in this project:
+hamish
+people involved in this project:
+heidi
+people involved in this project:
+matthew
+people involved in this project:
+riaan
+people involved in this project:
+simone
+                </pre></td>
+                  </tr>
+               </table>
+               <p>You'll notice that the echo commands were printed 5 times, once for every argument
+                                  in the list. This means that everything enclosed in the DO-DONE block will be
+                                  executed every time that FOR loops.
+               </p>
+               <p>Just a quick note, the file command tells us the type of a file. You could say:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+file restaurants.txt
+                </pre></td>
+                  </tr>
+               </table>
+               <p>and hopefully it will return:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+restaurants.txt: ASCII text
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Now, we could equally use a for-loop list in another way - we could say for example:<sup>[<a name="d0e6711" href="#ftn.d0e6711">19</a>]</sup>
+                              
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+for files in `ls -1`
+do
+	echo "file: `file $files`"
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Remember, from earlier in the course, we saw that <span><b class="command">ls -l</b></span> or $(ls
+                                  -1) executes the <span><b class="command">ls</b></span> command and produces some output. What this
+                                  FOR loop is doing, is listing every file in our current directory with the
+                                      <span><b class="command">ls -1</b></span>. For each one listed, it runs the
+                                  <span><b class="command">file</b></span> command on the file.
+               </p>
+               <p>The output from the above example might look something like:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+bash: file: Desktop/: directory: No such file or directory
+bash: file: Maildir/: directory: No such file or directory
+bash: file: _viminfo: ASCII text: command not found
+bash: file: blah.txt: ASCII text: command not found
+bash: file: tmp/: directory: No such file or directory
+bash: file: urls: ASCII English text: command not found
+bash: file: windows.profile/: directory: No such file or directory
+bash: file: winscp.RND: data: command not found
+                </pre></td>
+                  </tr>
+               </table>
+               <p>As long as you provide the "for" loop with a list, it's happy.</p>
+               <p>Another example of doing a for loop is as follows:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+for count in `seq 20`
+do
+	echo $count
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>This will produce a sequence of 20 numbers from 1 through 20.</p>
+               <p>Do an info on the 'seq' command to find out what else it can do.</p>
+               <p>Okay, so provided that you supply for with a list, it can cycle through that list
+                                  and do a command or sequence of commands once for every item on the list.
+               </p>
+               <p>There's another type of "for" loop, and that's using the for
+                                  without the 'in' statement.
+               </p>
+               <p>Here, the for loop uses the arguments supplied on the command line as the list
+                                  ($1, $2, $3, etc.). Using the general syntax of the "for" loop as follows:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+for var 
+do
+	...
+	...
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Cycle through the arguments on the command line with the script:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+#!/bin/bash
+for arg
+do
+	echo $arg
+done
+exit 0
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Make the script executable, and then run it:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+chmod +x for.sh
+
+./for.sh one two three four
+                </pre></td>
+                  </tr>
+               </table>
+               <p>When run, the script will cycle through the "for" loop four (4)
+                                  times, echoing your parameters one by one. Let's make this for loop a bit snazzier.
+               </p>
+               <p>We're going to set a variable count at the top of our script to the value 1, which
+                                  will keep track of the number of parameters:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+#!/bin/bash
+count=1
+for arg
+do
+	echo "Argument $count is $arg"
+	$((count=count+1))		
+done
+exit 0
+                </pre></td>
+                  </tr>
+               </table>
+               <p>This script will not only count up the number of arguments, but will also print
+                                  the value of each argument. Save the above script, make it executable and run it. If
+                                  you're using a shell that does not recognise the line with $(()) in it, then you can
+                                  use the line:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+count=`expr $count + 1`
+                </pre></td>
+                  </tr>
+               </table>
+               <p>You will notice a couple of things. First-off, although it seems to be
+                                  incrementing the count it also gives us some errors. Something like:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+Argument 1 is one
+./for.sh: line 6: 2: command not found
+Argument 2 is two
+./for.sh: line 6: 3: command not found
+Argument 3 is three
+./for.sh: line 6: 4: command not found
+Argument 4 is four
+./for.sh: line 6: 5: command not found
+                </pre></td>
+                  </tr>
+               </table>
+               <p>The errors stem from line 6, the "$((count=count+1))". This line
+                                  produces a number, and the command not found is this number (i.e. The shell is
+                                  looking for the command 2, or 3 or 4, etc.) So, one way of getting around this is to
+                                  put a noop in front of the line:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+#!/bin/bash
+count=1
+for arg
+do
+	echo "Argument $count is $arg"
+	: $((count=count+1))		
+done
+exit 0
+                </pre></td>
+                  </tr>
+               </table>
+               <p>This will execute the increment of the count without giving you any sort of error messages.</p>
+               <p>Running the script will produce:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+[riaan@debian] ~$ ./for.sh one two three four
+Argument 1 is one
+Argument 2 is two
+Argument 3 is three
+Argument 4 is four
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Alternatively you could replace line 6 with:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+count=$((count+1))	
+                </pre></td>
+                  </tr>
+               </table>
+               <p>This might be a little more intuitive anyway. Any which way you do it, you should
+                                  end up with the same four lines of output.
+               </p>
+               <p>A "for" loop without an 'in' allows you to cycle through your
+                                  arguments irrespective of the number of arguments.
+               </p>
+               <p>The final permutation of the "for" loop, although not available
+                                  under all shells, is one based on the "for" loop in C. 
+               </p>
+               <p>An example may be:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+for ((i=0; i&lt;=10; i=i+1))	#can replace i=i+1 with i++
+do
+	echo $i
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>This will count from 0 to 10.</p>
+               <p>Note that the syntax is like this:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+for ((start value; comparison; count increment))
+                </pre></td>
+                  </tr>
+               </table>
+               <p>If we wanted to count down from 10 to 0, we would do the following:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+for ((i=10; i&gt;=0; i=i-1))	#can replace i=i-1 with i--
+do
+	echo $i
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>This version of the "for" loop is useful as it allows a means of
+                                  iterating a defined number of times based upon a counter rather than a list.
+               </p>
+               <p>Clearly we could have achieve the same thing with:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+for i in `seq 10`
+do 
+	echo $i
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                  <table border="0" summary="Note">
+                     <tr>
+                        <td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../images/admon/note.png"></td>
+                        <th align="left">Note</th>
+                     </tr>
+                     <tr>
+                        <td colspan="2" align="left" valign="top">
+                           <p>the seq command would also allow you to count in reverse</p>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+               <p>In summary, there are three means of using the FOR loop:</p>
+               <div class="orderedlist">
+                  <ol type="1">
+                     <li>
+                        <p>for i in a list</p>
+                     </li>
+                     <li>
+                        <p>for a variable without the 'in' part, doing the arguments</p>
+                     </li>
+                     <li>
+                        <p>for i with a counter</p>
+                     </li>
+                  </ol>
+               </div>
+               <p>You would generally use for loops when you know the exact number of times that you
+                                  want your loop to execute. If you don't know how many times you are going to execute
+                                  the loop, you should use a while or an until loop.
+               </p>
+               <div class="sect3" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h4 class="title"><a name="d0e6838"></a>Exercises:
+                           </h4>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <div class="orderedlist">
+                     <ol type="1">
+                        <li>
+                           <p>Write a script that will cycle through all files in your current
+                                                          directory, printing the size and the name of each file. Additionally,
+                                                          ensure that each file type is recorded and printed.
+                           </p>
+                        </li>
+                        <li>
+                           <p>Write a script that will count to 30, and on every even number print a
+                                                          message indicating that this is an even number. Print a message
+                                                          indicating odd numbers too.
+                           </p>
+                        </li>
+                        <li>
+                           <p>Write a script to cycle through all arguments on the command line,
+                                                          counting the arguments. Ensure that one of your arguments contains the
+                                                          word 'hamish'. On reaching this argument, ensure that you print the message:
+                           </p>
+                           <table border="0" bgcolor="#E0E0E0">
+                              <tr>
+                                 <td><pre class="literallayout">
+"Hey, hamish is here. How about that!"
+                            </pre></td>
+                              </tr>
+                           </table>
+                        </li>
+                        <li>
+                           <p>Modify your menu.sh script to cycle in a loop an infinite number of
+                                                          times, sleeping for a minumum of 20 seconds before re-printing your menu
+                                                          to the console. Note that the original menu.sh script will need to be
+                                                          altered as in the original, a command line was supplied as a choice of
+                                                          which option to choose in the menu.
+                           </p>
+                        </li>
+                     </ol>
+                  </div>
+               </div>
+               <div class="sect3" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h4 class="title"><a name="d0e6856"></a>Challenge sequence:
+                           </h4>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>Write a script that will create a 6x4 HTML table. For this you will need to
+                                         understand how HTML tables work. See the appendix <a href="apa.html" title="Appendix&nbsp;A.&nbsp;Writing html pages">Appendix&nbsp;A</a>for references on books/links to teach you the basics
+                                         of HTML.
+                  </p>
+                  <p>Inside each cell, print the row:column numbers.</p>
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+| 1:1   | 1:2	| 1:3 | 1:4 | 1:5 | 1:6	|
+| 2:1	| 2:2	| 2:3 | 2:4 | 2:5 | 2:6	|
+| 3:1	| 3:2	| 3:3 | 3:4 | 3:5 | 3:6	|
+| 4:1	| 4:2	| 4:3 | 4:4 | 4:5 | 4:6	|
+                    </pre></td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+            <div class="sect2" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="while_until_loops"></a>while and until loops
+                        </h3>
+                     </div>
+                  </div>
+                  <div></div>
+               </div><a class="indexterm" name="d0e6870"></a><a class="indexterm" name="d0e6873"></a><p>A while loop has the following syntax: </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+while &lt;condition is true&gt;
+do 
+	...
+	...
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>And the until loop has the following syntax:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+until &lt;condition is true&gt; 
+do 
+	...
+	...
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>You should notice the [subtle] difference between these two loops.</p>
+               <p>The while loop executes ONLY WHILE the condition is TRUE(0), whereas the until
+                                  loop will continue to execute UNTIL the condition BECOMES TRUE(0).
+               </p>
+               <p>In other words, the UNTIL loop continues with a FALSE (1) condition, and stops as
+                                  soon as the condition becomes TRUE(0).
+               </p>
+               <p>Prior to beginning the UNTIL loop, the condition must be FALSE(1) in order to
+                                  execute the loop at least once.
+               </p>
+               <p>Prior coming into the while loop however, the condition must be TRUE(0) in order
+                                  to execute the block within the while statement at least once.
+               </p>
+               <p>Let's have a look at some examples. Here you could say:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+i=5
+while test "$i" -le 10
+do
+	echo $i
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Or we could rewrite the above example as:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+i=5
+while [ "$i" -le 10 ]
+do
+	echo $i
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Since the square brackets are just a synonym for the test command.</p><a class="indexterm" name="d0e6904"></a><p>Another example:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+while [ !-d `ls` ]
+do 
+	echo "file" 
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>which says:</p>
+               <p>"while a particular file is not a directory, echo the word 'file'"</p>
+               <p>So we could do tests like that where we want to test a particular type of file,
+                                  and we could do all sorts of conditions.
+               </p>
+               <p>Remember back to the test command, we could combine the tests with (an -a for AND
+                                  and -o for OR) some other test condition. So we can combine tests together as many
+                                  as we want.
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+while [ somecondition ] -a [ anothercondition ] -o [ yetanothercondition ]
+do
+	something
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>We will also look at the while loop again when we do the read command.</p>
+               <p>The until command is similar to the while command, but remember that the test is
+                                  reversed. 
+               </p>
+               <p>For example, we might want to see whether somebody is logged in to our systems.
+                                  Using the who command, create a script called aretheyloggedin.sh:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+user=$1
+until `who | grep "$user" &gt; /dev/null`
+do 
+	echo "User not logged in"
+
+done
+                </pre></td>
+                  </tr>
+               </table>
+               <p>This runs the who command piping the output to <span><b class="command">grep</b></span>, which
+                                  searches for a particular user.
+               </p>
+               <p>We're not interested in the output, so we redirect the output to the Linux black
+                                  hole (<b class="filename"><tt>/dev/null</tt></b>).
+               </p>
+               <p>This script will spew out tonnes of lines with:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+User not logged in
+                </pre></td>
+                  </tr>
+               </table>
+               <p>We therefore might want to include a command to sleep for a bit before doing the
+                                  check or printing the message again. How do we do that?
+               </p>
+               <p>Simply add the following line:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+sleep 10
+                </pre></td>
+                  </tr>
+               </table><a class="indexterm" name="d0e6951"></a><p>The script becomes:</p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+#!/bin/bash
+user=$1
+until who |grep "$user"&gt; /dev/null
+do 
+	echo "User not logged in"
+	sleep 10
+done
+echo "Finally!! $user has entered the OS"
+exit 0
+                </pre></td>
+                  </tr>
+               </table>
+               <p>Until the user logs in, the script will tell you that the user is not logged on.
+                                  The minute the user logs on, the script will tell you that the user has logged on
+                                  and the script will then exit.
+               </p>
+               <p>If we did not want to print anything until the user logged on, we could use the
+                                  noop in our loop as follows:
+               </p>
+               <table border="0" bgcolor="#E0E0E0">
+                  <tr>
+                     <td><pre class="literallayout">
+#!/bin/bash
+user=$1
+until who |grep "$user"&gt; /dev/null
+do 
+	:
+	sleep 10
+done
+echo "Finally, $user logged in"
+exit 0
+                </pre></td>
+                  </tr>
+               </table>
+               <p>And so there's a script that will monitor our system regularly to find out whether
+                                  a particular user has logged in. As soon as they log on, it will inform us.
+               </p>
+               <p>When you run the script, it will merely sit there -staring blankly at you. In
+                                  fact, it is performing that loop repeatedly, but there is no output.
+               </p>
+               <p>We've looked at the three types of loops that you're going to need when
+                                  programming in the shell: for loops, while loops and until loops.
+               </p>
+               <p>These should suffice for most scripts, and unless you're writing particularly
+                                  complex scripts (in which case you should be writing them in perl!) they should
+                                  serve your (almost) every need.
+               </p>
+               <div class="sect3" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h4 class="title"><a name="d0e6972"></a>The break and continue commands
+                           </h4>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div><a class="indexterm" name="d0e6975"></a><a class="indexterm" name="d0e6978"></a><p>During execution of the script, we might want to break out of the loop. This
+                                         time we're going to create a script called html.sh, which is going to produce an
+                                         html table.
+                  </p>
+                  <p>Now an HTML table is built row by row in HTML a table can only built a row at
+                                         a time. We start by telling the browser that what follows is an HTML table, and
+                                         every time we start a row we have to enclose the row with a row indicator (
+                                         &lt;TR&gt;) and end the row with a row terminator (&lt;/TR&gt;) tag.
+                  </p>
+                  <p>Each element in the row is enclosed in a table-data tag (&lt;TD&gt;)
+                                         and terminated in a end-table-data tag (&lt;/TD&gt;)
+                  </p>
+                  <p>A snippet of how to write a table in HTML (I've set the border of our table to 1):</p>
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+&lt;TABLE BORDER="1"&gt;
+&lt;TR&gt;&lt;TD&gt;element&lt;/TD&gt;&lt;/TR&gt;
+&lt;TR&gt;&lt;TD&gt;element&lt;/TD&gt;&lt;/TR&gt;
+&lt;/TABLE&gt;
+                    </pre></td>
+                     </tr>
+                  </table>
+                  <p>The easiest way to generate a table of 4 rows, and 3 columns is to use a for
+                                         loop since we know the exact number of times that we want to execute the loop.
+                  </p>
+                  <p>Adding the following to html.sh:</p>
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+#!/bin/bash
+echo "&lt;TABLE BORDER='1'&gt;"
+for row in `seq 4`
+do
+	echo "&lt;TR&gt;&lt;/TR"&gt;
+done
+echo "&lt;/TABLE&gt;"
+exit 0
+                    </pre></td>
+                     </tr>
+                  </table>
+                  <p>should create a table with 4 rows, but no columns (table-data).</p>
+                  <p>As usual make the script executable and run it with the following commands:</p>
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+chmod +x  html.sh
+
+./html.sh &gt; /tmp/table.html
+                    </pre></td>
+                     </tr>
+                  </table>
+                  <p>Open your favourite browser (Mozilla, Opera, Galleon, Firebird) and point the
+                                         browser at this new file by entering the URL:
+                  </p>
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+file:///tmp/table.html
+                    </pre></td>
+                     </tr>
+                  </table>
+                  <p>You should see a whole lot of nothing happening, because we haven't put any
+                                         elements in our table.
+                  </p>
+                  <p>Let's add some table data, as well as some extra rows.</p>
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+#!/bin/bash# Start by warning the browser that a table is starting
+	echo "&lt;TABLE BORDER='1'&gt;"
+	
+# Start the ROWs of the table (4 rows)
+	for row in `seq 4` 
+	do
+# Start the row for this iteration
+	   echo "&lt;TR&gt;"
+	   
+# Within each row, we need 3 columns (or table-data)
+	   for col in `seq 3` 
+	   do
+#If this row 2, then break out of this inner (column) loop, returning to the next ROW above.
+	      if [ $row -eq 2 ] 
+	      then    
+	         break;  
+	      fi      
+# If this is NOT row 2, then put the cell in here.
+	      echo "   &lt;TD&gt;$row,$col&lt;/TD&gt;"
+	   done
+# End this ROW
+	   echo "&lt;/TR&gt;"
+	done#End this table.
+	echo "&lt;/TABLE&gt;"
+	exit 0
+                    </pre></td>
+                     </tr>
+                  </table>
+                  <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                     <table border="0" summary="Note">
+                        <tr>
+                           <td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../images/admon/note.png"></td>
+                           <th align="left">Note</th>
+                        </tr>
+                        <tr>
+                           <td colspan="2" align="left" valign="top">
+                              <p>This time, inside each row, we put some data. Previously we placed no data
+                                                         in the rows. Also, notice that when ROW 2 is reached, we
+                                                         "BREAK" out of this inner loop, continuing with the outer
+                                                         loop (i.e. incrementing to the next ROW).
+                              </p>
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+                  <p>If you hold the shift key down and click the reload button of your web
+                                         browser, you should see now that you have data in the table. Not really that exciting?!
+                  </p><a class="indexterm" name="d0e7020"></a><p>Let's make this a LOT more fun, I have included the script below. Read through
+                                         it, work out what it does and then saving it in a script called runfun.sh, run
+                                         it using the following command line:
+                  </p>
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+./runfun.sh &gt; index.html
+                    </pre></td>
+                     </tr>
+                  </table>
+                  <p>Again, point your browser at the resulting file (index.html) and enjoy.</p>
+                  <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                     <table border="0" summary="Note">
+                        <tr>
+                           <td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../images/admon/note.png"></td>
+                           <th align="left">Note</th>
+                        </tr>
+                        <tr>
+                           <td colspan="2" align="left" valign="top">
+                              <p>For this to work propperly you will need to make sure that the index.html
+                                                         file is created in the directory where you have the gif <a href="../images/gif.tar.gz" target="_top">gif.tar.gz</a> files stored.
+                              </p>
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+#!/bin/bash
+
+ANIM=`ls -1 *.gif`
+NUM=`echo "$ANIM" | wc -l`
+echo "&lt;TABLE BORDER='1' bgcolor='FFFFFF'&gt;"
+for file in `seq 2` 
+do
+   echo "&lt;tr&gt;"
+   for row in `seq 3` 
+   do
+      file=`echo "$ANIM" | head -1`
+
+      NUM=$(( NUM - 1 ))
+
+      ANIM=`echo "$ANIM" | tail -$NUM`
+
+      echo "&lt;td&gt;"
+# This is probably the only part you may have difficulty understanding. Here we include 
+# an image in the cell rather than text. For this to work, you will need the couple of GIF 
+# images packaged with this course.
+echo "   &lt;img src=$file alt='Image is: $file'&gt;"
+echo "&lt;/td&gt;"
+done
+echo "&lt;/tr&gt;"
+done
+echo "&lt;/TABLE&gt;"
+                    </pre></td>
+                     </tr>
+                  </table>
+                  <p>This should produce a table for us with 3 rows and 3 columns.</p>
+                  <p>So what happens if we wanted to skip column two, in other words, we didn't
+                                         want any data in column 2? Well we could add the following if-then statement:
+                  </p>
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+if [ "$col" -eq 2 ]
+then 
+    break
+fi
+                    </pre></td>
+                     </tr>
+                  </table>
+                  <p>The break command would break out of the inner loop. So we would find that we
+                                         don't have any data for column 2, but we do have data for column 1 and 3. You
+                                         can add an argument to the break command such as:
+                  </p>
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+break 2
+                    </pre></td>
+                     </tr>
+                  </table>
+                  <p>which would break out of the two inner-most loops.</p>
+                  <p>Thus, break is a way of immediately terminating a loop. A couple of pointers,
+                                         even if you broke out of the loops, the exit status is still run. All the break
+                                         statement is doing is exiting out of the inner loop and then out of the outer
+                                         loop because we did a 'break 2'.
+                  </p>
+                  <p>There's nothing wrong with using break as programming practice goes - it's
+                                         used by C programmers all over the world.
+                  </p>
+                  <p>There might also be instances where you have a loop and on a condition you
+                                         want it to continue. On a condition that we may want to continue the loop
+                                         without executing the commands that follow the continue statement.
+                  </p>
+                  <p>For example:</p>
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+loop
+do
+	condition
+		continue
+	...
+	...
+done
+                    </pre></td>
+                     </tr>
+                  </table>
+                  <p>Continue tells the loop to skip any commands found on the lines following the
+                                         continue beginning again at the top of the loop. This is the opposite of what
+                                         the break command does, which terminates the loop.
+                  </p>
+                  <p>A final word on loops. Suppose we wanted to save the output of the loop to a
+                                         file, we would do this by redirecting the output to a file at the END of the
+                                         loop as follows:
+                  </p>
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+for ((i=0;i&lt;10;i++))
+do
+	echo "Number is now $i"
+done &gt; forloop.txt
+                    </pre></td>
+                     </tr>
+                  </table>
+                  <p>We will see further uses of this when we come to the read command later.</p>
+                  <p>Perhaps we want to take the output of this FOR loop and pipe it into the
+                                         translate command. We could say:
+                  </p>
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+for ((i=0;i&lt;10;i++))
+do
+	echo "Number is now $i"
+done |tr '[a-z]' '[A-Z]'
+                    </pre></td>
+                     </tr>
+                  </table>
+                  <p>We could achieve piping and redirection as per all the previous commands we
+                                         have done:
+                  </p>
+                  <table border="0" bgcolor="#E0E0E0">
+                     <tr>
+                        <td><pre class="literallayout">
+for ((i=0;i&lt;10;i++))
+do
+	echo "Number is now $i"
+done |tr '[a-z]' '[A-Z]' &gt;forloop.txt
+                    </pre></td>
+                     </tr>
+                  </table>
+                  <p>Note that the pipe or redirect must appear AFTER the 'done' and not after the 'for'.</p>
+               </div>
+               <div class="sect3" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h4 class="title"><a name="d0e7078"></a>Exercises:
+                           </h4>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <div class="orderedlist">
+                     <ol type="1">
+                        <li>
+                           <p>Write a script that will loop as many times as there are files in your
+                                                          home directory.
+                           </p>
+                        </li>
+                        <li>
+                           <p>Write an infinite while loop that will terminate on a user logging out.</p>
+                        </li>
+                        <li>
+                           <p>Write a script that will produce an HTML table of the output of the
+                                                          'free' command. Save the output to a file mem.html, and using your
+                                                          favourite browser see that the output is working correctly.
+                           </p>
+                        </li>
+                        <li>
+                           <p>Write a script that will print every user that logs onto the system</p>
+                        </li>
+                     </ol>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="footnotes"><br><hr width="100" align="left">
+            <div class="footnote">
+               <p><sup>[<a name="ftn.d0e6711" href="#d0e6711">19</a>] </sup>this is not <span><b class="command">ls -l</b></span> as you might expect. It is
+                                              <span><b class="command">ls -1</b></span> (one)
+               </p>
+            </div>
+         </div>
+      </div>
+      <div class="navfooter">
+         <hr>
+         <table width="100%" summary="Navigation footer">
+            <tr>
+               <td width="40%" align="left"><a accesskey="p" href="ch07s04.html"><img src="../images/navig/prev.gif" alt="Prev"></a>&nbsp;
+               </td>
+               <td width="20%" align="center"><a accesskey="u" href="index.html"><img src="../images/navig/up.gif" alt="Up"></a></td>
+               <td width="40%" align="right">&nbsp;<a accesskey="n" href="ch08s02.html"><img src="../images/navig/next.gif" alt="Next"></a></td>
+            </tr>
+            <tr>
+               <td width="40%" align="left" valign="top">Debugging your scripts&nbsp;</td>
+               <td width="20%" align="center"><a accesskey="h" href="index.html"><img src="../images/navig/home.gif" alt="Home"></a></td>
+               <td width="40%" align="right" valign="top">&nbsp;getopts Using arguments and parameters </td>
+            </tr>
+         </table>
+      </div>
+   </body>
+</html>

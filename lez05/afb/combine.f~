@@ -1,0 +1,10 @@
+      program combine
+      implicit none
+
+      open(unit=11,
+     &  file='numbers_LHC_bare_mu/lhc_z_mu_minf_oal_norec_150.dat',
+     &  status='old')
+
+
+
+      end

@@ -1,0 +1,6 @@
+smart,Parks,6834948,9
+italian,Bardellis,6973434,5
+steakhouse,Nelsons Eye,6361017,8 
+steakhouse,Butchers,Grill,6741326,7
+smart,Joes,6781234,5
+

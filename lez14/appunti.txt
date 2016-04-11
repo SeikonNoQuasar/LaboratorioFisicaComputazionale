@@ -1,0 +1,312 @@
+Lez 14 ()
+
+############# Solo prima parte C++
+
+	parleremo della spacializzazione dei template
+
+	special.cpp
+________________________________________________________________________
+
+template<typename T = int, typename U = T>
+class mypair{
+	T t_;
+	U u_;
+public:
+	mypair(T t,U u) : t_(t), u_(u) {};
+	T get_t() {
+		t_.pippo();	//visto che non usa nessun mypair, il compilatore si fida che quando la genererò, avrà un
+		return t_;	//membro di nome pippo. se provo a istanziare un mypair ora verrà errore
+	}
+	U get_t() {return u_;}
+};
+
+int main(){
+}
+_______________________________________________________________________
+
+	Questa è il programma da cui partiamo, per parlare della specializzazione.
+	il template è una ricetta per costruire classi del tipo mypair (in quresto caso), ma io posso dare delle
+	specifiche alla classe, per cui per esempio posso dirle che se la coppia mypair è di un certo tipo allora fai
+	questoquestoquesto.
+
+_________________________________________________________________________
+
+#include<iostream>
+using namespace std;
+
+template<typename T = int, typename U = T>
+class mypair{
+	T t_;
+	U u_;
+public:
+	mypair(T t,U u) : t_(t), u_(u) {};
+	T get_t() { return t_;}
+	U get_t() {return u_;}
+};
+
+//specializzazione TOTALE	
+template<>
+class mypair<bool,bool> {	//se il mio è un template così, allora comportati in questo modo
+	char pack_;		//NOTA: non eredito tutte le cose della classe base (non ho get, a meno che non lo
+public:				//riscriva
+	mypair(bool b1, bool b2) {
+		pack_ = (b1?1:0) + (b2?2:0);	//operatore ternario a?b:c se a è vero fai b, se è falso fai c
+	}
+	void print(){ cout << static_cast<int>(pack_) << endl; }
+	// ...
+};
+
+int main(){
+
+	//cout << sizeof(bool) << endl;
+
+	mypair<bool,bool> pb(true,true);
+	pb.print();
+
+}
+__________________________________________________________________________
+
+
+	parliamo ora di specializzazione parziale
+
+__________________________________________________________________________
+
+#include<iostream>
+using namespace std;
+
+template<typename T = int, typename U = T>
+class mypair{
+	T t_;
+	U u_;
+public:
+	mypair(T t,U u) : t_(t), u_(u) {};
+	T get_t() { return t_;}
+	U get_t() {return u_;}
+};
+
+
+
+//specializzazione PARZIALE	
+template<typename U>		//qualche volta si può trovare class al posto di typename
+class mypair<string,U> {}
+
+/*
+
+//altro esempio di specializzazione PARZIALE
+//
+template<typename T>
+class widget {};
+
+template<typename U>
+class widget<U*> {};
+
+template<typename U>
+class widget<U[]> {};
+
+template<typename U>
+class widget<U&> {};
+
+*/
+int main(){
+
+	//cout << sizeof(bool) << endl;
+
+	mypair<bool,bool> pb(true,true);
+	pb.print();
+
+}
+_____________________________________________________________________
+
+
+
+CONTAINER (della libreria standard) //che in fondo sono dei teplate molto complessi
+
+	stl = Standard Template Library
+
+	crea il file makefile
+	%.cpp
+	/opt/centos/devtoolset-1.1/root/usr/bin/c++ -std=c++11 $< -o $@
+
+
+	prova a far andare questo programma:
+
+	cpp11.cpp
+_____________________________________________________
+int main(){
+
+	//deduzione automatica dei tipi
+	auto i = 6;	//il compilatore capisce il tipo senza che io lo espliciti
+
+	// range-based for loop
+	for (auto i : {1,5,6,9,11,8,8,2}) {
+			cout << i << endl;
+	}
+
+}
+__________________________________
+
+	introduciamo il VECTOR che consiste sostanzialmente in un vettore automaticamente dinamico (ovvero che cambia
+		automaticamente la dimensione nel caso serva)
+
+
+	container.cpp (prima iterazione)
+______________________________________________________________
+
+#include<vector>
+#include<iostream>
+using namespace std;
+
+int main(){
+	//i boundary di un vettore con N oggetti sono 0 e N-1
+	/*std::*/vector<int> v = {1,2,3,4,5,6,7};
+	cout << v[1] << " " << v[6] << endl;	//è stato fatto l'overloading di [] per vector
+}
+________________________________________________________________
+
+
+
+	container.cpp (seconda iterazione)
+_________________________________________________________________
+#include<vector>
+#include<iostream>
+using namespace std;
+
+int main(){
+	//i boundary di un vettore con N oggetti sono 0 e N-1
+	/*std::*/vector<int> v = {1,2,3,4,5,6,7};
+	//cout << v[1] << " " << v[6] << endl;	//è stato fatto l'overloading di [] per vector
+	cout << v.at(1) << endl;
+}
+___________________________________________________________________
+
+	il vantaggio dell'operatore at() rispetto al [] (che ha la stessa funzione), è che il primo fa un check dei 
+	boundary, e se si trova fuori lancia un ECCEZIONE
+
+
+	container.cpp (terza iterazione)
+_________________________________________________________________
+#include<vector>
+#include<iostream>
+using namespace std;
+
+int main(){
+	//i boundary di un vettore con N oggetti sono 0 e N-1
+	/*std::*/vector<int> v = {1,2,3,4,5,6,7};
+	//cout << v[1] << " " << v[6] << endl;	//è stato fatto l'overloading di [] per vector
+	cout << v.at(1) << endl;
+
+	v.push_back(3);		//aggiunge un elemento in coda, in particolare aggiunge 3
+	for(auto el : v) cout << el << endl;		//el automaticamente funge da indice nell'ambiente v e lo 
+							//percorre
+	for(auto el : v) el = 6; //NON FUNZIONA perchè agisce sulla copia di v
+	for(auto el : v) cout << el << endl;
+
+	for(auto & el : v) el = 6; //Questo invece funziona, e riempie il mio v con solo 6
+	for(auto el : v) cout << el << endl;
+}
+___________________________________________________________________
+
+
+	container.cpp (quarta iterazione)
+___________________________________________________________________
+
+#include<vector>
+#include<iostream>
+using namespace std;
+
+int main(){
+	//i boundary di un vettore con N oggetti sono 0 e N-1
+
+	/*std::*/vector<int> v = {1,2,3,4,5,6,7};
+
+	//cout << v[1] << " " << v[6] << endl;	//è stato fatto l'overloading di [] per vector
+	//cout << v.at(1) << endl;
+
+	v.push_back(3);		//aggiunge un elemento in coda, in particolare aggiunge 3
+	for(auto el : v) cout << el << endl;		//el automaticamente funge da indice nell'ambiente v e lo 
+							//percorre
+	//for(auto el : v) el = 6; //NON FUNZIONA perchè agisce sulla copia di v
+	//for(auto el : v) cout << el << endl;
+
+	//for(auto & el : v) el = 6; //Questo invece funziona, e riempie il mio v con solo 6
+	//for(auto el : v) cout << el << endl;
+
+	cout << v.size() << " " << v.capacity() << endl;	//due funzioni diverse per capire la taglia. 
+								//size mi dice che ci ho messo dentro tot elementi
+								//capacity invece mi dice quanti posso metterne prima 
+								//che cambi la zona di memoria in cui sto mettendo v
+								//(in pratica allargare vector lo allarga di un tot, e 
+								//non ogni volta di un singolo posto)
+}
+_____________________________________________________________________________________________________
+
+
+	vector rialloca moltiplicativamente
+	ciò è legato al fatto che la complessità algoritmica dell'inserzione deve essere "amortized 0(1)" //WTF
+
+
+
+	cosa succede se modifico v usando l'operatore [] (che passa una referenza e non una copia)?
+
+
+		container.cpp (quinta iterazione)
+___________________________________________________________________
+
+#include<vector>
+#include<iostream>
+using namespace std;
+
+int main(){
+	//i boundary di un vettore con N oggetti sono 0 e N-1
+
+	/*std::*/vector<int> v = {1,2,3,4,5,6,7};
+
+	//cout << v[1] << " " << v[6] << endl;	//è stato fatto l'overloading di [] per vector
+	//cout << v.at(1) << endl;
+
+	v.push_back(3);		//aggiunge un elemento in coda, in particolare aggiunge 3
+	for(auto el : v) cout << el << endl;		//el automaticamente funge da indice nell'ambiente v e lo 
+							//percorre
+	//for(auto el : v) el = 6; //NON FUNZIONA perchè agisce sulla copia di v
+	//for(auto el : v) cout << el << endl;
+
+	//for(auto & el : v) el = 6; //Questo invece funziona, e riempie il mio v con solo 6
+	//for(auto el : v) cout << el << endl;
+
+	//cout << v.size() << " " << v.capacity() << endl;	//due funzioni diverse per capire la taglia. 
+								//size mi dice che ci ho messo dentro tot elementi
+								//capacity invece mi dice quanti posso metterne prima 
+								//che cambi la zona di memoria in cui sto mettendo v
+								//(in pratica allargare vector lo allarga di un tot, e 
+								//non ogni volta di un singolo posto)
+
+	int a = 55;
+	v.push_back(a);
+	v[7] = 11;
+	cout << a << endl;	// a NON viene modificato, infatti in container della STL implementano la semantica di 
+				//valore
+}
+_____________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

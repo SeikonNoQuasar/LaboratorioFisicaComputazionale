@@ -1,0 +1,242 @@
+Lez01		(wwwteor.mi.infn.it/~vicini/lezioni1112/lezione_3_latex.html)
+
+###################### PRIMA PARTE (latex e shell)
+
+*	DA FARE SUL PORTATILE: installare latex (il compiatore( e quindi il pacchetto 
+
+*	ho scaricato  e scompattato tex.tar.gz nella cartella lez01 in LCM
+*	tutti i comandi il latex sono gestiti attraverso backslash \
+*	i commenti in latex si fanno mettendo il %
+
+*	il comando latex invoca il compilatore di latex che compila il file .tex e si usa: " latex nome.tex" e crea un file .dvi CHE POI VIENE CONVERTITO IN FILE PostScript () oppure pdf ().
+
+*	esiste anche il comando "pdflatex nome.tex" che compila e converte direttamente in pdf
+*	latex deve compilare due volte a causa della grafica legata al file che vogliamo ottenere, la prima compilazione indicizza le varie parti (ovvero 		da una collocazione alle varie parti), e verifica che l'ordinamento sia corretto  attraverso il file .aux, le seconda compilazione (si mostra 		necessaria rilevando undefined references)
+
+*	usa il comando "evince" per aprire pdf
+
+********lettera.tex (e poi pdf)
+
+*	per usare i colori invochiamo il pacchetto color (	\userpackage{color}	)
+*	poi decido le dimensioni della pagina attraverso \setlenght dando queste dimensioni assolute
+*	\\ = a capo
+*	un doppio a capo indica il cambio di paragrafo:
+
+	"blabla
+
+	blabla"
+
+*	\' = mette l'accento grave sulla prossima lettera
+*	\clearpage = porta alla pagina successiva
+
+*	in generale basta aprire il file .tex con gedit e il pdf con evince e confrontare i due per capire come funziona
+*****************************
+
+********** SHELL
+
+*	shell = processo di interfaccia. finesta e' diverso da shell, posso aprire piu' shell in una finestra ma non il contrario, 
+*	esistono diverse shell: zsh, bash, 
+*	fg -> mette in foreground l'ultimo processo avviato
+*	ctrl+Z e poi bg-> mette in background il processo in fg
+
+*	ps -> mostra i processi attivi nella shell
+*	ps aux -> (all user)
+*	top -> mostra l'utilizzo del pc
+*	which "comando" -> mostra la location dove la shel recupera il significato del comando
+*	echo $PATH -> mostra quali sono le directory in cui la shell cerca i comandi che le passo, in generale se esiste un comando nella cartella 		corrente usa quello, altrimenti lo cerca nelle cartelle elencate da echo
+*******************************
+
+
+
+############### SECONDA PARTE ( C++ )
+
+Paradigmi di programmazione: (~paradigma: come il linguaggio pensa)
+*	linguaggio imperativo: in cui il programmatore dice cosa fare alla macchina (assembly)
+*	linguaggio dichiarativo
+*	linguaggio funzionale: senza effetti collaterali (side effects) (mathematica)
+*	linguaggio orientato agli oggetti
+
+*	linguaggio multi-paradigma: che sfutta piu' paradigmi (C++)
+
+Intro: basics
+
+*	4 fasi nella compilazione:
+
+esempio:
+
+file lib.cpp
+_________________________________________________
+
+#include <iostream>
+
+#define MESSAGE "hello world"
+
+void speak(){
+	std::cout << MESSAGE << std::endl;
+}
+_________________________________________________
+
+file main.cpp
+_________________________________________________
+
+extern void speak();	//dichiarazione (non definizione)
+
+int main(){
+	speak();
+}
+_________________________________________________
+
+* una dichiarazione dice solo al programa che qualcosa esiste, da qualche parte devo inserire la definizone (spiegare cosa faccia quella cosa)
+  una dichiarazione NON occupa memoria, una definizione si. posso aggiungere "extern" solo per esplicitare che la definizione e' esterna al file
+* come compilatore si puo' usare clang o anche gcc (attenzione se ci sono cose diverse)
+
+Primo step: pre-processore (gcc -E lib.cpp -o lib?PRE.cpp)
+	il file di output del preprocessore e' un file cpp con un lingo header e poi il programma alla fine
+
+Secondo step: compilazione (gcc -S lib_PRE.cpp)
+	genera un file .s e svolge tutti i passaggi della compilazione meno gli ultimi due, trasforma il file c++ in un file di assembly, che e' il 		linguaggio nativo del processore (avremmo potuto scrivere direttamente tutto attraverso assembly)
+
+	troviamo una funzione globale __Z5speakv che e' il nome in assembly della mia funzion (la v sta per void)
+
+	si fa la stessa cosa con il main (gcc -S main.cpp)
+
+Terzo Step: (gcc -c main.s) e (gcc -c lib.cpp)
+	finalizza la trasformazione in un linguaggio che il computer puo' comprendere (binario)
+
+Quarto Step: linking (gcc lib.o main.o -o main) ((A ME NON VA PERCHE' SONO SFIGATO))
+	crea l'eseguibile (gli altri creavano file oggetto)
+
+*	aggiungo ora a lib.cpp un'altra funzione
+__________________________________
+
+void prova(int, double){}
+__________________________________
+
+	e compilo di nuovo per vedere che forma ha in assembly (primi due step) ((basta usare il -S))
+	si nota che il nome in assembli dipende dalle variabili necessarie (in questo caso __Z5provaid per int e double).
+	Per questo motivo l'overloading funziona (funzioni con lo stesso nome in c++ ma diverso nome in assembly)
+
+creo un file overloading.cpp
+______________________________________________
+
+#include <iostream>
+
+using namespace std;
+
+void tipo(int i){
+	cout << "intero" << endl;
+}
+
+void tipo(double i){
+	cout << "double" << endl;
+}
+
+int main(){
+	int i = 4;
+	double d = 4;
+
+	tipo(i);
+	tipo(d);
+}
+_____________________________________________
+
+e compilandola si verifica il funzionamento dell'overloading.
+
+PUNTATORI: 
+
+	l'operatore fondamentale e' l'operatore &, che permette di riferirsi alla posizione in cui qualcosa e' salvato
+
+	creo un file pointers.cpp
+___________________________________________________
+
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int file_scope1, file_scope2;	//dichiaro due variabili che avranno validita' (scope) per tutto il mio file (a differenza di quelle interne al main
+
+int main(){
+
+	auto double main_scope1, main_scope2;	//si chiamano VARIABILI AUTOMATICHE, perche' le gestisce il programma (le elimina automaticamente)
+
+	cout << hex << &file_scope1 << endl;	//hex mi permette di stampare in esadecimale
+	cout << hex << &file_scope2 << endl;
+	cout << hex << &main_scope1 << endl;
+	cout << hex << &main_scope2 << endl;
+
+	
+}
+____________________________________________________
+
+	* auto e' come extern, una cosa opzionale che mi dice qualcosa ma posso anche omettere
+
+aggiungo ora il puntatore usando "int *" (per una variabile intera) o "double *" e poi li stampo
+
+____________________________________________________
+
+int * pi = &file_scope1;
+double * pd = &main_scope1;
+ // c++ e' strongly typed, ovvero c'e' un controllo molto stretto sulla coerenza dei tipi
+
+cout << "pi: " << pi << endl;
+cout << "pd: " << pd << endl;
+____________________________________________________
+
+*	si puo' usare l'operatore sizeof(int) o sizeof(double) per valutare la dimensione in byte di un tipo.
+
+
+ESEMPIO CLASSICO
+
+	file pass.cpp
+___________________________________________
+
+
+void funz(int i){
+	i = i+1;
+}
+
+int main(){
+	int i = 5;
+	funz(i);
+	return i;
+}		//in questo caso il cout ci dira' che i=5, perche' ho usato copie di i per il calcolo nella funzione
+__________________________________________
+
+ e poi visualizzo il ritorno ella funzione usando "echo $?"
+
+
+uso pass2.cpp per sistemare il problema
+___________________________________________
+
+void funz(int * pi){
+	++(*pi);	// *pi indica cio' che sta all'indirizzo pi
+}
+
+int main(){
+	int i = 5;
+	funz(&i);	//do un indirizzo che poi gestisco come puntatore
+	return i;
+}
+__________________________________________
+
+
+posso anche usare le referenze per passare i valori, funzionano allo stesso modo dei puntatori, come per esempio in ref.cpp:
+____________________________________________
+
+void funz(int & ri){
+	++ri;
+}
+
+int main(){
+	int i = 5;
+	funz(i);
+	return i;
+}
+____________________________________________-
+
+
+
+
+
+
+ 

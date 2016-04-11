@@ -1,0 +1,296 @@
+Lez06		(wwwteor.mi.infn.it/~vicini/lezioni1112/mathematica_1.html)
+
+	Solve[ lista_di_equazioni, variabili], per esempio:
+_______________________________________________--
+
+In[1]:= Solve[ {a x1 + b x2 == c x1 + d x2 == 5}, {x1, x2}]
+
+                 -5 (b - d)          5 (a - c)
+Out[1]= {{x1 -> ------------, x2 -> ------------}}
+                -(b c) + a d        -(b c) + a d
+___________________________________________________
+
+
+Parliamo ora di equazioni differenziali:
+
+	sono necessari 3 argomenti: equazioni, funzione soluzione e variabile di integrazione. se non specifico le condizioni al contorno otterro' una
+	famiglia di soluzioni
+
+	Per richiedere la soluzione si usa il comando DSolve, per esempio:
+____________________________________________________
+
+In[2]:= DSolve[ y''[x] + 4 y[x] == 0, y[x], x]		// gli apici per derivare funzionano solo se ho una funzione di una sola variabile
+
+Out[2]= {{y[x] -> C[1] Cos[2 x] + C[2] Sin[2 x]}}	//C[i] sono due costanti che dipendono dalle condizioni al contorno
+____________________________________________________
+
+	NOTA: cerca sempre di non sare le lettere maiuscole speciali come mie variabili. C e' la costante di integrazione, D la derivata...
+
+	Posso introdure le condizioni al contorno dopo le equazioni, separando con una virgola, mettendo tutto in una graffa al primo termine:
+		(NOTA: in mancanza di un numero sufficiente di eq al contorno verranno determinate le costanti possibili e lasciate incognite le altre)
+____________________________________________________
+
+In[4]:= DSolve[ { y''[x] + 4 y[x] == 0, y[0]==1, y'[0]==0}, y[x], x]
+
+Out[4]= {{y[x] -> Cos[2 x]}}
+____________________________________________________
+
+	Posso anche andare a cercare una soluzione numerica per la mia soluzione (invece che quella "grafica"), per farlo uso la funzione NDSolve e devo
+	dare l'intervallo di risoluzione.
+	
+____________________________________________________
+
+In[5]:= NDSolve[ {y''[x] + 4 y[x]==0, y[0]==1, y'[0]==0}, y[x], {x,0,5}]
+
+Out[5]= {{y[x] -> InterpolatingFunction[{{0., 5.}}, <>][x]}}
+_____________________________________________________
+
+	Posso quindi sfruttare la soluzione "di sostituzione" che mi e' stata data mettendola in una funzione e calcolando poi come si comporta in vari
+	punti
+_______________________________________________________
+
+In[5]:= NDSolve[ {y''[x] + 4 y[x]==0, y[0]==1, y'[0]==0}, y[x], {x,0,5}]
+
+Out[5]= {{y[x] -> InterpolatingFunction[{{0., 5.}}, <>][x]}}
+
+In[6]:= Sol[x_]= y[x] /. %5
+
+Out[6]= {InterpolatingFunction[{{0., 5.}}, <>][x]}
+
+In[9]:= Sol[x_]
+
+Out[9]= {InterpolatingFunction[{{0., 5.}}, <>][x_]}
+
+In[10]:= Sol[0.]			//dovrebbe essere un coseno, quindi todo bien
+
+Out[10]= {1.}
+
+In[11]:= Sol[50.]			//La nostra funzione e' valida solo per l'intervallo definito all'inizio!
+
+InterpolatingFunction::dmval: 
+   Input value {50.} lies outside the range of data in the interpolating
+     function. Extrapolation will be used.
+
+                    7
+Out[11]= {1.58176 10 }
+
+In[15]:= Plot[ Sol[x], {x,0,5}]		//Posso poi eventualmente Plottare il tutto
+
+Out[15]= -Graphics-
+
+_____________________________________________________
+
+	
+	Posso usare plot per plottare anche piu' di una funzione della stessa variabile
+__________________________________________________
+
+In[16]:= Plot[ {Sin[x], x-x^3/6}, {x,0,2 Pi}]	//Plot di un seno e un polinomio nello stesso intervallo
+
+Out[16]= -Graphics-
+_________________________________________________
+
+	esiste anche la funzione Plot3D che mi permette di vedere grafici di fuznioni a due variabili:
+________________________________________________
+
+In[2]:= Plot3D[ Sin[x^2+y^2], {x, -3,3}, {y, -3,3} ]		//Plotta default
+
+Out[2]= -SurfaceGraphics-
+
+In[4]:= Plot3D[ Sin[x^2+y^2], {x,-3,3}, {y,-3,3}, PlotPoints->5]	//plot con la valutazione della mia funzione in solo 5 punti
+
+Out[4]= -SurfaceGraphics-
+
+In[5]:= Plot3D[ Sin[x^2+y^2], {x,-3,3}, {y,-3,3}, PlotPoints->500]	//aumento la precisione del mio grafico aumentandone manualmente il numero di
+									//punti valutati
+
+Out[5]= -SurfaceGraphics-
+______________________________________________________________
+
+	Possso anche fare grafici a partire da una lista di dati con ListPlot, 
+_________________________________________________________
+
+In[7]:= dati = Table[ {i, Random[]}, {i,1,6}]
+
+Out[7]= {{1, 0.785582}, {2, 0.885756}, {3, 0.854901}, {4, 0.263299}, 
+ 
+>    {5, 0.0622642}, {6, 0.6478}}
+
+In[8]:= ListPlot[ dati ]
+
+Out[8]= -Graphics-
+_________________________________________________________
+
+	oppure trovare il modo di fare il plot di un cerchio:
+_________________________________________________________
+
+In[2]:= Plot[ {Sqrt[1-x^2], -Sqrt[1-x^2]}, {x,-1,1}]		//sfrutto la possibilita' di ffare un plot di due funzioni separate per le due 
+								//parametrizzazioni dei poli del cerchio
+Out[2]= -Graphics-
+
+In[3]:= Plot[ {Sqrt[1-x^2], -Sqrt[1-x^2]}, {x,-1,1}, AspectRatio->1]	//ne correggo la grafica con aspectratio
+
+Out[3]= -Graphics-
+
+**************OPPURE*******************
+
+In[4]:= ParametricPlot[ r = 3; {r Cos[th], r Sin[th] }, {th,0,2 Pi}]	//sfrutto la funzione paramertric plot che mi permette di plottare direttamente 
+									// esplicitando la parametrizzazione
+Out[4]= -Graphics-
+
+In[5]:= ParametricPlot[ r = 3; {r Cos[th], r Sin[th] }, {th,0,2 Pi}, AspectRatio->1]
+
+Out[5]= -Graphics-
+
+In[6]:= ParametricPlot3D[ r=1; {r Sin[th] Cos[fi], r Sin[th] Sin[fi], r Cos[th]}, {th,0,Pi}, {fi,0,2 Pi}]	//same in 3d
+
+Out[6]= -Graphics3D-
+
+___________________________________________________________
+
+	Il comando Show visualizza un grafico (per esempio Show[ %nn ] mi mostra il grafico in out[nn])
+	Se salviamo il nostro grafico in una variabile siamo a questo punto in grado di richiamare in ogni momento i punti senza doverli ricalcolare
+__________________________________________________________
+
+In[25]:= grafico = Plot3D[ Sin[x^2+y^2], {x,0,2 Pi}, {y,0,2 Pi}]
+
+Out[25]= -SurfaceGraphics-
+
+In[26]:= f[a_,b_,c_]:= Show[ grafico, ViewPoint->{a,b,c}]
+
+In[27]:= f[0,0,1]
+
+Out[27]= -SurfaceGraphics-
+______________________________________________________________
+
+
+
+	COMANDO IF: If[condizioni, true, false]
+
+	Uso di which per costruire una funzione per casi:
+_________________________________________________________
+
+In[31]:= f[x_] := Which[ x<0, x^2, x>=0 && x<2, 3, x>=2, Log[x] ]
+
+In[33]:= Plot[ f[x], {x,-4,4}]
+
+Out[33]= -Graphics-
+__________________________________________________________
+
+	NOW -> wwwteor.mi.infn.it/~vicini/lezioni1112/esercizi_mathematica.pdf
+
+	-> calcola gli integrali
+
+
+###################################### SECONDA PARTE	C++
+
+	file getset.cpp
+________________________________________________________
+// IDIOMA get/set
+//	-> "extra level of indirection"
+
+class widget{				//"aggeggio" o "dispositivo" (* libreria per grafica: gtkmm *)
+	
+	int i_;			//Dato che non ha "membro definito' e' privato (cosi' funzionano le classi)
+public:
+	get_i() {return i_;}		//lettura
+	void set_i(int i) {i_ = i;}	//scrittura
+};
+________________________________________________________
+
+	Pattern: soluzione ricorrente ad un problema ricorrente
+	Idioma: workaround legato al linguaggio di programmazione (una specie di piccolo fix  che mi permette qualcosa di permesso da altre parti)
+
+utilita' get e set, sta nella gestione di:
+	Costraint: qualunque cosa impichi un vincolo, per esempio un valore massimo che non puo' essere assegnato ad una variabile
+	Invariante: due variabili che rappresentano la stessa cosa per esempio in coordinate diverse, voglio che modificandone uno mi venga corretto
+			anche l'altro senza dover calcolare attraverso le trasformazioni
+
+
+	uso delle ENUM che "crea" nuovi tipi di variabili
+______________________________________________________
+//tipi enum
+
+#include <iostream>
+using namespace std;
+
+enum color {red,green,blue};		//esiste un tipo di variabile di nome color che puo' assumere i valori red, green, blue
+
+int main() {
+
+	color c;	
+	c = red
+
+	cout << c << endl;		
+
+	//internamente posso fare operazioni di uguaglianza, infatti i valori possiili sono automaticamente castati in variabili intere per esempio che 
+	//codificano i valori possibili
+
+	//infatti avro' red == 0, green == 1, blue == 2
+}
+______________________________________________________
+
+	-> esercizio process.cpp
+
+	se io ho una funzione usata come:
+	
+		Robot r;
+		r.get_active_arm().move()
+
+`	posso dedurre che esistono due classi una del tipo Robot e una per esempio Arm. Inoltre so che la funzione get_active_arm deve essere del tipo Arm
+
+	class arm {
+		void move()
+	}
+	class robot{
+		arm get_active_arm(){}
+	}
+
+	si chiama ASSOCIATIVITA' A SINISTRA, ovvero affinche io possa usare la funzione move mi serve che essa sia chiamata da un qualcosa di tipo arm
+
+	IDIOMA "name parameter"
+		-> le funzioni set ritornano una referenza a *this (ovvero all'oggetto stesso che ha fatto la chiamata)
+			in questo modo io posso scrivere oggetto.set_a(1).set_b(4).set_c(9) e settare in un colpo solo tutte le variabili
+
+	COSTRUTTORE E DISTRUTTORE (vedi ctor.cpp)
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

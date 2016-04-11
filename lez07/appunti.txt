@@ -1,0 +1,195 @@
+Lez07
+
+######################## PARTE UNO: Mathematica
+
+esercizio sui logaritmi (dal foglio degli esercizi)
+	
+	complexlog.m
+esercizio sul plot di riemman (dal foglio degli esercizi)
+
+	riemmannplot.m
+esercizio sul calcolo del determinante della matrice (dal foglio degli esercizi)
+
+	det3.m
+
+
+################################################### Parte 2
+
+	const.cpp
+_______________________________________________________________
+
+#include<iostream>
+using namespace std;
+
+int main(){
+
+
+	const int a = 1;
+	//a = 3;		// errore in compilazione per il vincolo di CONST
+
+}
+________________________________________________________________
+
+	valuto ora const sulle strutture e le classi:
+
+________________________________________________________________
+
+#include<iostream>
+using namespace std;
+
+struct person {
+	enum color{green, brown, blue};
+
+	color eye;
+	
+	person(): eye(brown){};
+
+	color get() const {
+		//eye = blue;	//vietato per la const-ness		
+
+		return eye;}	//se non metto const dopo get, se creo nel main "const person p" mi crea problemi in compilazione, devo infatti 
+					// assicurare che non abbia funzioni che possano modificare la const che definisco
+};
+
+int main(){
+
+	const person p;
+	p.get();
+
+	//"mutable" attributi che possono variare anche se all'interno di costanti
+}
+_________________________________________________________________
+
+
+	temporary.cpp
+__________________________________________________________________
+
+#include<iostream>
+using namespace std;
+
+int main(){
+
+	int & ri = 5;	//errore in compilazione per il "lvalue"
+
+}
+__________________________________________________________________
+
+
+	lvalue = espressioni che possono stare a sinistra dell'uguale
+	rvalue = espressioni che possono stare a destra dell'uguale
+
+	solitamente lvalue e' anche rvalue, ma non viceversa (vedi 5 = a; )
+
+__________________________________________________________________
+
+include<iostream>
+using namespace std;
+
+struct verbose {
+	verbose(){ cout << "CTOR" << endl;}
+	~verbose(){ cout << "DTOR" << endl;}
+};
+
+verbose gimme(){		//-> return by value (ovvero sto ritornando direttamente un oggetto, non un valore)
+	return verbose();	   //sto bypassando la creazione di un oggetto e richiamando direttamente il costruttore (return value optimization)
+}
+
+
+
+int main(){
+
+	//gimme();				//temporary
+	// verbose & rv = gimme();		//non posso farlo, essendo gimme temporary ovvero non essendo lvalue non costante
+	const verbose & rv = gimme();	//questo invece posso farlo, infatti questa sintassi mi permette di estendere la vita del temporary
+	cout << " ---- " << endl;						|
+										|
+}										|
+____________________________________________________________________		|
+										|
+						infatti se prima (con gimme()) attivato costruttore, distruttore, e main, ora il processo e'
+						costruttore main distruttore (vedi i cout)
+
+	Alternativa per aumentare la durata della vita del temporary
+___________________________________________________________________
+
+include<iostream>
+using namespace std;
+
+struct verbose {
+	verbose(){ cout << "CTOR" << endl;}
+	~verbose(){ cout << "DTOR" << endl;}
+};
+
+verbose * gimme(){		
+	return new verbose();	 	//QUI: tuttavia non e' specificato chi dovr  
+}
+
+
+
+int main(){
+
+	//gimme();				//temporary
+	// verbose & rv = gimme();		//non posso farlo, essendo gimme temporary ovvero non essendo lvalue non costante
+	const verbose & rv = gimme();	//questo invece posso farlo, infatti questa sintassi mi permette di estendere la vita del temporary
+	cout << " ---- " << endl;
+}				
+___________________________________________________________________
+
+	in generale le referenza non possono legarsi a qualcosa che sia temporary. piu` in particolare le referenze possno legarsi solo a  oggetti che 
+	siano leftvalue. se uso la riga
+_________________________
+	int a = 5;
+	int & ri = a;
+_________________________
+
+	cio` mi e` possibile, perche' a e` un possibile lvalue.
+
+
+--------------- ESERCIZIO	huge.cpp 
+
+
+
+	copyCTOR.cpp
+____________________________________________________________________
+//copy-constructor
+
+#include<iostream>
+using namespace std;
+
+struct verbose {
+	verbose() {cout << "CTOR" << endl;
+	~verbose(){cout << "DTOR" << endl;
+	explicit verbose(verbose &) {cout << "COPY" << endl;}	//e' necessario mettere un riferimento allo stesso tipo come argomento per distinguerlo dal CTOR
+};
+
+void by_value(verbose){}
+void by_ref(verbose &){}
+
+int main(){
+
+	verbose v;
+	by_value(v); //copia implicita
+	by_ref(v)
+
+	cout << " ---- " << endl;
+
+	verbose v1(v); //chiamata esplicita al copy constructor
+	verboce v2 = v1;	//non viene chiamato l'operatore "=" ma viene fatta una chiamata implicita al copy contructor, perche` dico:	
+}				//costruisci un oggetto di tipo verbose a partire da uno stampo del tipo v1.
+_____________________________________________________________________
+
+	l'uso di EXPLICIT per il costruttore ne VIETA l'utilizzo implicito
+	l'uso di EXPLICIT per il costruttore ne VIETA l'utilizzo per la conversione automatica dei tipi
+
+	la copia che viene fatta dalla chiamatra della funzione per value viene a questo punto fatta con il costruttore per copie (copy-constructor),
+	viene poi distrutta dal distruttore.
+
+	*********************
+	./copyCTOR
+
+	CTOR
+	COPY
+	DTOR
+	----
+	DTOR
+	*********************

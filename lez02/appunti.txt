@@ -1,0 +1,232 @@
+Lez02		
+
+############### Seconda Parte	(C++) -non abbiamo fatto la prima parte della lezione-
+
+
+parliamo ora dell'operatore new creando il file new.cpp
+
+______________________________________________________-
+
+int main(){
+
+	double * pd = new double;	//devo segnalare all'operatore new il tipo della variabile 
+
+	//faccio cose
+
+	delete pd;			// delete libera la zona di memoria e cui punta il puntatore ovvero elimina la mia variabile creata con new
+
+					/*qui pd e' un dangling pointer, se uso ora (*pd) rischio il segmentation fault (ovvero stai cercando di 						accedere a un indirizzo di memoria non allocato per te. segmentation fault e' un runtime error (che e' un errore 						che si verifica mentre gira il programma, a differenza degli errori che compaiono in compilazione */
+
+	double * pa = new double[22];
+	delete [] pa;			/*il puntatore non sa che sta puntanto ad un array, quindi uso delete [] che avvisa il sistema (il sistema 						scopre la dimensione perche' e' contenuta nel nome */
+}
+_____________________________________________________
+
+	le variabili create automaticamente dal sistema hanno due limitazioni:
+		- vengono salvate nello "stack", una zona di memoria relativamente ristretta e facilmente esauribile
+		- vengono eliminate automaticamente dal sistema nel momento in cui si esce dallo scope, e questo non permette di utilizzarle in altri 			  scope
+	a differenza delle variabili automatiche, le variabili create con new ed eliminate con delete risolvono queste limitazioni. new richiede al 		computer una zona di memoria in cui salvare per tempo indefinito una variabile.
+	con la formula double * pd = new double la variabile a cui il puntatore punta sopravvive all'eliminazione del puntatore (che invece funziona 		come una variabile automatica), se ho un modo per riferirmi ancora a quella posizione troverei ancora la mia variabile.
+	dopo il delete, pd ESISTE ANCORA, ed e' quindi utilizzabile, ma si riferisce ad una zona di memoria che potrebbe essere stata modificata da 		qualche altro processo. Si dice che pd e' un DANGLING POINTER. 
+
+
+parliamo ora dei puntatori a funzione con il programma funcpoint.cpp
+
+_______________________________________________________-
+
+#include <iostream>
+using namespace std;
+
+void func(int){}
+
+int main(){
+
+	cout << &func << endl;
+
+}
+_______________________________________________________
+
+	fatto cosi' il programma viene compilato, ma la compilazione mi lascia un 1 invece della posizione. Provando a togliere la &,
+	la compilazione mi dice che c'e' qualcosa di strano (un warning). la funzione infatti e' valutata come un booleano e dato che esiste mi da un 1 	ovvero true.
+
+	risolco la cosa riscrivendo il progamma in questo modo:
+	
+_______________________________________________________-
+
+#include <iostream>
+using namespace std;
+
+void func(int){}
+
+int main(){
+
+	cout << reinterpret_cast<long>(func) << endl;
+
+}
+_______________________________________________________
+
+
+	cast: prendere una variabile di un certo tipo e interpretarla come se fosse di un tipo diverso
+	ne esistono di vari tipo:
+		- reinterpret	(il tipo piu' violento, forza cast molto diversi)
+		- static	(adatto per tipi gia' simili (int e float per esempio)
+		- dinamic
+		- ??
+
+	e ancora una volta faccio delle modifiche per mostrare il tipo dei puntatori a funzione:
+
+_________________________________________________	
+
+#include <iostream>
+using namespace std;
+
+void func(int){}
+
+int main(){
+
+	cout << reinterpret_cast<long>(func) << endl;
+
+	void (*pf)(int);		// attenzione void *pf(int) dice che ho una funzione di nome pf che vuole un intero e ritorna un puntatore a un 					// void (ovvero un puntatore generico, che per essere usato richiedera un cast ad un altro tipo di puntatore
+
+	pf = func;			// oppure pf = &func;
+	pf(5);
+
+
+	///
+	double d = static_cast<double>(7)/3;
+	cout << d << endl;
+	///
+
+}
+
+/*ESERCIZIO: qual'e' il tipo di queste definizioni?
+	void funz(int (*pf)(double,double));
+	int (*funz2 (char c))(double,double);
+	*/
+
+________________________________________________
+
+	aggiungo ora una funzione per parlare dei valori di default:
+
+_________________________________________________	
+
+#include <iostream>
+using namespace std;
+
+void func(int){}
+
+int piu(int a, int b = 0){	return a+b; }	//b=0 mi dice che se io non passo alla funzione un secondo parametro, allora considero b come = 0. puo' 						//essere usato su entrambi, ma in generale se lo uso sul primo parametro devo usarlo su tutti i 						//successivi 
+
+int main(){
+
+	cout << reinterpret_cast<long>(func) << endl;
+
+	void (*pf)(int);		// attenzione void *pf(int) dice che ho una funzione di nome pf che vuole un intero e ritorna un puntatore a un 					// void (ovvero un puntatore generico, che per essere usato richiedera un cast ad un altro tipo di puntatore
+
+	pf = func;			// oppure pf = &func;
+	pf(5);
+
+
+	///
+	double d = static_cast<double>(7)/3;
+	cout << d << endl;
+	///
+
+	///
+	cout << "default" << endl;
+	cout << piu(1,3) << " " << piu(2) << endl;
+	///
+
+}
+
+/*ESERCIZIO: qual'e' il tipo di queste definizioni?
+	void funz(int (*pf)(double,double));
+	int (*funz2 (char c))(double,double);
+	*/
+
+________________________________________________
+
+
+
+######### ESERCIZIO	array.cpp
+	crea un array dinamico;
+#####################################
+
+
+uso delle strutture (struct.cpp)
+
+_________________________________________________--
+
+struct cursor {
+	long pos_x, pos_y;
+	void move(long new_x, long new_y);	//dichiarazione
+};	//punto e virgola!!
+
+void cursor::move(long new_x, long new_y){	//cursor:: perche' move non esiste globalmente ma solo nello space di cursor
+	pos_x = new_x;
+	pos_y = new_y;
+	cout << this << endl;
+}
+
+int main(){
+	
+	cursor c;	//creo una variabile di nome c e di tipo cursor
+	cursor c2;
+
+	c.move(200, 300);	//move riceve anche un puntatore all'oggetto che ha eseguito la chiamata, che possiamo richiamare con la funzione this
+	
+
+	cout << &c << endl;
+}
+________________________________________________
+
+	si puo' usare this all'interno della definizione di cursor nei due modi:
+
+_____________________________________________-
+
+void cursor::move(long new_x, long new_y){
+	(*this).pos_x = new_x;
+	this->pos_y = new_y;
+	cout << this << endl;
+}
+_____________________________________________
+
+
+	e ora provo a creare una struttura in cui mostro la differenza tra public e private: (public.cpp)
+__________________________________________________________
+
+struct pudica {
+private:
+	int i_;
+
+public:
+	int i;
+};
+
+int main(){
+
+	pudica p;
+	
+	p.i_;	//usare questo termine mi segnala errore in compilazione, perche' i_ e' privato
+	p.i;	//posso usarlo a volonta' in quanto pubblico
+}
+____________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

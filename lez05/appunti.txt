@@ -1,0 +1,319 @@
+Lez05		(wwwteor.mi.infn.it/~vicini/lezioni1112/mathematica_1.html)	#! == SHA-BANG
+
+##############3 COMANDI DI MATHEMATICA
+
+
+_________________________________________________________
+
+In[1]:= Integrate[ x^(1-a) (1-x)^(b-1), {x,0,1}]
+
+                                   Gamma[2 - a] Gamma[b]
+Out[1]= If[Re[a] < 2 && Re[b] > 0, ---------------------,	//la funzione integrata vale questa espressione, se sono soddisfatte le condizioni 
+                                     Gamma[2 - a + b]		//precedenti
+ 
+                      -1 + b  1 - a
+>    Integrate[(1 - x)       x     , {x, 0, 1}, 		
+ 
+>     Assumptions -> Re[b] <= 0 || Re[a] >= 2]]
+________________________________________________________
+
+Con mathematica si possono anche calcolare le somme delle serie:
+________________________________________________________
+
+In[2]:= Sum[ x^n, {n,0,Infinity}]			//scrittura: Sum[ funzione, {variabile, val_min, val_max}]
+
+          1
+Out[2]= -----
+        1 - x
+
+In[3]:= Sum[ x^n, {x,1,7}]
+
+             n    n    n    n    n    n
+Out[3]= 1 + 2  + 3  + 4  + 5  + 6  + 7
+
+In[4]:= Sum[ x^n, {n,1,Infinity}]
+
+            x
+Out[4]= -(------)
+          -1 + x
+
+In[5]:= Sum[ x^n, {x,1,7}] 				//Qui sto facendo variare x al posto di n
+
+             n    n    n    n    n    n
+Out[5]= 1 + 2  + 3  + 4  + 5  + 6  + 7
+
+________________________________________________________
+
+Posso calcolare la produttoria di un valore
+________________________________________________________
+
+In[5]:= Sum[ x^n, {x,1,7}] 
+
+             n    n    n    n    n    n
+Out[5]= 1 + 2  + 3  + 4  + 5  + 6  + 7
+_______________________________________________________
+
+
+
+Con la funzione Table siamo in grando di gestire tabelle
+
+____________________________________________________
+
+In[1]:= Table[ a[i], {i,1,5}]
+
+Out[1]= {a[1], a[2], a[3], a[4], a[5]}
+
+In[2]:= Table[ a[i,j], {i,1,3}, {j,1,5}]
+
+Out[2]= {{a[1, 1], a[1, 2], a[1, 3], a[1, 4], a[1, 5]}, 
+ 
+>    {a[2, 1], a[2, 2], a[2, 3], a[2, 4], a[2, 5]}, 
+ 
+>    {a[3, 1], a[3, 2], a[3, 3], a[3, 4], a[3, 5]}}
+
+In[3]:= Table[ tmp=i^2; tmp=Log[tmp]; tmp, {i,1,5}]	//Qui ho piu' elementi nel primo argomento (delimitato dalla virgola), ma e l'ultimo di questi 
+							//elementi ad essere la variabile
+Out[3]= {0, Log[4], Log[9], Log[16], Log[25]}
+
+In[4]:= f[x_]:= x^3
+
+In[5]:= Table[ f[i], {i,1,5}]				//dato che mathematica trova una definizione per f[] allora usa la precedente invece che creare 
+							//un array come ha fatto sopra per a[]
+Out[5]= {1, 8, 27, 64, 125}
+
+______________________________________________________
+
+Un metodo alternativo per le tabelle e' usare M e sfruttare quindi una lista di liste (matrici) e farne calcoli algebrici:
+____________________________________________________\
+
+In[7]:= M = { {a,b}, {c,d} }
+
+Out[7]= {{a, b}, {c, d}}
+
+In[8]:= M // MatrixForm
+
+Out[8]//MatrixForm= a   b
+
+                    c   d
+
+In[9]:= Det[ M ]				//funzione per calcolare il determinante di una lista di liste
+
+Out[9]= -(b c) + a d
+
+In[10]:= Eigenvalues[ M ]			//funzione per calcolare gli autovalori
+
+                        2                    2
+          a + d - Sqrt[a  + 4 b c - 2 a d + d ]
+Out[10]= {-------------------------------------, 
+                            2
+ 
+                   2                    2
+     a + d + Sqrt[a  + 4 b c - 2 a d + d ]
+>    -------------------------------------}
+                       2
+
+In[11]:= Eigenvectors[ M ]			//funzione per determinare gli autovettori
+
+                            2                    2
+           -(-a + d + Sqrt[a  + 4 b c - 2 a d + d ])
+Out[11]= {{-----------------------------------------, 1}, 
+                              2 c
+ 
+                       2                    2
+      -(-a + d - Sqrt[a  + 4 b c - 2 a d + d ])
+>    {-----------------------------------------, 1}}
+                         2 c
+
+___________________________________________________
+
+Posso svolgere anche operazioni tra matrici e vettori:
+
+___________________________________________________
+
+In[16]:= X = {x1, x2}				//vettore
+
+Out[16]= {x1, x2}
+
+In[4]:= X = {x1,x2}				//prodotto per scalare
+
+Out[4]= {x1, x2}
+
+In[5]:= a X
+
+Out[5]= {a x1, a x2}
+
+
+In[17]:= M.X					// . e' l'operatore per il prodotto riga per colonna
+
+Out[17]= {a x1 + b x2, c x1 + d x2}
+
+In[18]:= M2 = {{r,s},{t,u}}
+
+Out[18]= {{r, s}, {t, u}}
+
+In[20]:= M2.M
+
+Out[20]= {{a r + c s, b r + d s}, {a t + c u, b t + d u}}
+
+In[21]:= W = {w1, w2}
+
+Out[21]= {w1, w2}
+
+In[22]:= X.W
+
+Out[22]= w1 x1 + w2 x2
+
+In[23]:= W3 = {w1, w2, w3}
+
+Out[23]= {w1, w2, w3}
+
+In[24]:= X.W3
+
+Dot::dotsh: Tensors {x1, x2} and {w1, w2, w3} have incompatible shapes.		//messaggio di errore
+
+Out[24]= {x1, x2} . {w1, w2, w3}
+_____________________________________________________________
+
+Ovviamente per il prodotto, l'ordine conta:
+____________________________________________________________________
+
+In[25]:= M.X
+
+Out[25]= {a x1 + b x2, c x1 + d x2}
+
+In[26]:= X.M
+
+Out[26]= {a x1 + c x2, b x1 + d x2}
+____________________________________________________________________
+
+~~ esercizio sulle matrici di pauli
+
+Si puo' usare mathematica per risolvere sistemi lineari, attraverso Solve[ M.X==Y, X} ovvero 
+									Solve[ mat_coeff . vett_incognite == vett_risultati, rispetto_a_quale_vettore]
+____________________________________________________________________
+
+In[3]:= M = {{a,b},{c,d}}
+
+Out[3]= {{a, b}, {c, d}}
+
+In[4]:= X = {x1, x2}
+
+Out[4]= {x1, x2}
+
+In[5]:= Y = {2,3}
+
+Out[5]= {2, 3}
+
+In[6]:= M.X == T
+
+Out[6]= {a x1 + b x2, c x1 + d x2} == T
+
+In[7]:= M.X == Y
+
+Out[7]= {a x1 + b x2, c x1 + d x2} == {2, 3}
+
+In[8]:= Solve[ M.X==Y, X]
+
+                   3 b - 2 d              -3 a + 2 c
+Out[8]= {{x1 -> -(------------), x2 -> -(------------)}}
+                  -(b c) + a d           -(b c) + a d
+_____________________________________________________________________
+
+	NOTA: per inserire piu' di un'equazione si usano le parentesi graffe separando con una virgola
+
+EASTER EGG:
+___________________________________________________________________
+
+In[9]:= Solve[ a x^2 + b x + c == 0, x]
+
+                          2                             2
+               -b - Sqrt[b  - 4 a c]         -b + Sqrt[b  - 4 a c]
+Out[9]= {{x -> ---------------------}, {x -> ---------------------}}	//
+                        2 a                           2 a
+
+__________________________________________________________________
+
+	ESERCIZIO: scrivi un algoritmo per calcolare l'inversa per una matrice e poi veerificalo con la funzione Inverse[M]
+		-> puoi fare anche la stessa cosa con il determinante
+
+
+################################# SECONDA PARTE
+
+Ancora lavoro sugli script:
+
+	xsec.sh (*)
+
+	dalla shell posso creare numeri casuali usando echo $RANDOM
+
+generare 100 numeri random dala shell:
+_____________________________________________________________-
+
+for ((i=1;i<101;++i)) do echo $RANDOM >> semi.dat; done
+_____________________________________________________________
+
+
+subscale.sh (in questa cartella)
+	per vedere i risultati dell-esecuzione vai alla cartella di vicini in lcm:
+								/home/vicini/corso1516/lez09mar16
+
+
+*	dato un file voti.txt
+_______________________________________
+pippo 18 ok
+pluto 27 ok
+paperino 15 np
+_______________________________________
+
+	voglio calcolarne la media attraverso uno script media.sh
+_______________________________________
+
+awk '{print $1}' voti.txt 	#in pratica awk suddivide il file in colonne suddividendo laddove vede uno spazio
+	-> pippo
+	   pluto
+	   paperino
+
+awk '{print $2}' voti.txt
+	-> 18
+	   27
+	   15
+
+awk '{print $3}' voti.txt 
+	-> ok
+	   ok
+	   no
+
+awk '{print $3 $1 $2}' voti.txt
+	-> ok pippo 18
+	   ok pluto 27
+	   no paperino 15
+
+awk '{media+=$2} END {print media}' voti.txt	#stampo la somma dei voti
+	-> 60
+awk '{media+=$2} END {print media/NR}'		#NR = number of records = numero di righe processate da awk
+	->20
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
