@@ -9,7 +9,7 @@ stampa richiamando le funzioni
 
 /* #############################################################
 
-FUNZIONANTE!
+non so giudicare il funzionamento o meno del programma perchè la funzione print() provoca segmentation fault
 
 ############################################################## */
 
@@ -42,15 +42,16 @@ public:
 	quadrato(){};
 	~quadrato(){};
 
-	quadrato(const quadrato &){};
+	quadrato(const quadrato &){};	//sembra non essere un problema di copia
 
-	void print(){ cout << "Quadrato!" << endl;}
+	 void print(){ cout << "Quadrato!" << endl;}
 };
 
 
 int main(){
 
-	forma * p[4];	// array di puntatore a forme
+	forma * p[4];	// e capisci dove sbagliamo nella parte dopo. questo e' giusto.
+//	forma * p = new forma[4];		//SBAGLIATO, questo e' un array di forme, a noi serve un array di puntatori a forme
 
 	int k;
 	for(int i=0; i<4; ++i){
@@ -60,27 +61,63 @@ int main(){
 
 		cin >> k;
 		if(k == 0){
-			
-			p[i] = new cerchio;		
+			cerchio * c = new cerchio;
+
+				/*					
+					cout << " c ";
+					//c->print();
+					cout << endl;
+				*/
 					
+			p[i] = c;		// oppure *(p[i])=*(c); ???
+					
+				/*
+					cout << " p ";
+					//p[i]->print();
+					cout << endl;
+				*/				
+	
+			delete c;			
 		}
 		else if(k == 1){
-			
-			p[i] = new quadrato;		
-				
+			quadrato * q = new quadrato;
+
+				/*					
+					cout << " q ";
+					//q->print();
+					cout << endl;
+				*/
+					
+			*(p[i]) = (*q);
+					
+				/*
+					cout << " p ";
+					//p[i]->print();
+					delete q;
+				*/
 					
 		}else{
-			cout << endl;
 			cout << "Try again: " << endl;
+			cout << " - 0 : to create a circle" << endl;
+			cout << " - 1 : to create a square" << endl;
 			i--;
 		}
 	}
 
-	for(int j=0; j<4; j++){
-		p[j]->print();
-	}
+	cout << "check1" << endl;
 
-	//delete[] p;		//Non va messo?
+	//QUI - SEGMENTATION FAULT
+/*
+
+	for(int j=0; j<4; j++)
+		p[j]->print();
+*/
+
+	p[1]->print();	//anche questa semplice cosa provoca segmentation fault
+
+	cout << "check2" << endl;		
+
+	//delete[] p;
 
 	return 0;
 

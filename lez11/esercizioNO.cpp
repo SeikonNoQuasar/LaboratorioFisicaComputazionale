@@ -7,18 +7,11 @@
 			- una funzione swap (che scambi due oggetti) [efficiente!]
 */
 
-/* #########################################################
-
-IL PROGRAMMA FUNZIONA, MA DA UN PROBLEMA DI MEMORY LEAK DOVUTO AL DELETE NEL DISTRUTTORE!
-
-########################################################### */
-
 #include <iostream>
 using namespace std;
 
 /*
 	uso la vecchia classe random creata nello scorso lab
-###################################################################################################################
 */
 
 #include <cmath>
@@ -87,7 +80,6 @@ double caso::random(){		//crea numeri casuali tra 0 e 1
 
 
 /*
-################################################################################################################
 Fine della parte pregenerata
 */
 
@@ -106,17 +98,10 @@ public:
 
 	resource(const resource &);
 	void operator= (const resource &);
+//	void move(resource *);		//implementate come funzioni esterne
+//	void swap(resource *);		//implementate come funzioni esterne
 	void print() { for(int u=0; u<n_; u++) cout << p_[u] << endl;}
 
-	void set_n( int n) { n_=n;}
-	int get_n(){ return n_;}
-
-	void assign_pointer( double * p) {p_ = p;}
-	void set_pointed( double  p){ *p_ = p;}
-	double get_pointed() {return *p_;}
-	double * get_pointer() {return p_;}
-
-	void change_bool();
 };
 
 void move(resource &, resource &);
@@ -140,7 +125,7 @@ resource::resource(int i, int seed){
 
 resource::~resource(){
 
-		//delete[] p_;	//QUESTO E' IL PROBLEMA, SE TOLGO IL DELETE FUNZIONA; ALTRIMENTI MEMORY LEAK
+		delete[] p_;
 }
 
 resource::resource(const resource & old){	//OK
@@ -159,32 +144,19 @@ void resource::operator= (const resource & rhs){ 	//OK
 	
 }
 
-void resource::change_bool(){
-
-	if(is_valid == true){ is_valid = false;}
-	else{ is_valid = true;}
-}
-
 /*
 crea una funzione move(a,b), tale per cui dopo la chiamata di move(a,b)
 ci si aspetta che il puntatore b.p punti ala zona di memoria di a (AVEVO RAGIONE!!!!!)
 RICORDA: a rimane dangling, inoltre a deve perdere la ownership alla zona di memoria! (per esempio usando una variabile booleana "is_valid" e per ogni operazione aggiungere un controllo)
 
 */
-void move(resource & a, resource & b){		// (move this, here)
+void move(resource & a, resource & b){
 
-	if(a.get_n() != b.get_n()) cout << "Non ho potuto operare uno spostamento in un vettore di dimensione diversa" << endl;
+	if(a.n_ != b.n_) cout << "Non ho potuto operare uno spostamento in un vettore di dimensione diversa" << endl;
 
-/* //SE TUTTO FOSSE PUBLIC:
-
-	delete[] a.p_;		//come faccio???
+	delete[] a.p_;
 	a.p_ = b.p_;
 	b.is_valid = false;
-*/
-
-	delete[] a.get_pointer();
-	a.assign_pointer( b.get_pointer());
-	b.change_bool();
 }
 
 /*
@@ -194,18 +166,11 @@ USA UN TERZO PUNTATORE
 
 void swap(resource & a, resource & b){
 
-/*	SE FOSSE TUTTO PUBLIC:
 	resource tempo(a);
 	//delete[] tempo.p_;
 	tempo.p_ = a.p_;
 	a.p_ = b.p_;
 	b.p_ = tempo.p_;
-*/
-
-	resource tempo(a);
-	tempo.assign_pointer( a.get_pointer());
-	a.assign_pointer( b.get_pointer());
-	b.assign_pointer( tempo.get_pointer());
 	
 }
 		
@@ -221,7 +186,7 @@ void swap(resource & a, resource & b, resource & c){			//esperimento: lo scambio
 
 int main(){
 
-
+/*
 		resource c(5,3), d(5,10);
 
 		cout << "Esistono: " << endl;
@@ -263,8 +228,9 @@ int main(){
 		cout << " a " << endl;
 		a.print();
 		cout << endl;
-
+*/
 		resource r(3,6), bs(3,18);
+		//resource r(3,6), bs(3,18), bss(3,2);
 		
 		cout << "Esistono: " << endl;
 		cout << endl;
@@ -280,6 +246,7 @@ int main(){
 		cout << endl;
 
 		swap(r, bs);
+		//swap(r,bs,bss);
 		
 		cout << " r " << endl;
 		r.print();
@@ -287,6 +254,8 @@ int main(){
 		cout << " bs " << endl;
 		bs.print();
 		cout << endl;
+		
+		
 
 	return 0;
 }

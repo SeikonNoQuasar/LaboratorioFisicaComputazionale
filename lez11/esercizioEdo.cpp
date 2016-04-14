@@ -106,13 +106,15 @@ public:
 
 	resource(const resource &);
 	void operator= (const resource &);
+//	void move(resource *);		//implementate come funzioni esterne
+//	void swap(resource *);		//implementate come funzioni esterne
 	void print() { for(int u=0; u<n_; u++) cout << p_[u] << endl;}
 
 	void set_n( int n) { n_=n;}
 	int get_n(){ return n_;}
 
 	void assign_pointer( double * p) {p_ = p;}
-	void set_pointed( double  p){ *p_ = p;}
+	void set_pointed( double  p){ *p_ = p;}	//CORRETTO??
 	double get_pointed() {return *p_;}
 	double * get_pointer() {return p_;}
 
@@ -140,7 +142,7 @@ resource::resource(int i, int seed){
 
 resource::~resource(){
 
-		//delete[] p_;	//QUESTO E' IL PROBLEMA, SE TOLGO IL DELETE FUNZIONA; ALTRIMENTI MEMORY LEAK
+		delete[] p_;	//QUESTO E' IL PROBLEMA, SE TOLGO IL DELETE FUNZIONA; ALTRIMENTI MEMORY LEAK
 }
 
 resource::resource(const resource & old){	//OK
@@ -265,6 +267,7 @@ int main(){
 		cout << endl;
 
 		resource r(3,6), bs(3,18);
+		//resource r(3,6), bs(3,18), bss(3,2);
 		
 		cout << "Esistono: " << endl;
 		cout << endl;
@@ -280,6 +283,7 @@ int main(){
 		cout << endl;
 
 		swap(r, bs);
+		//swap(r,bs,bss);
 		
 		cout << " r " << endl;
 		r.print();
@@ -287,6 +291,8 @@ int main(){
 		cout << " bs " << endl;
 		bs.print();
 		cout << endl;
+
+		
 
 	return 0;
 }
