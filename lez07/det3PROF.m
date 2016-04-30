@@ -1,7 +1,8 @@
 (*
 mydet[{{a_,b_},{c_,d_}}] = a d - b c;
 
-mydet[ matrice_] := Module[ {temp},		(* molto comodo il module perche' mi permette di creare variabili interne che esistono solo
+mydet[ matrice_] := Module[ {temp},		(* molto comodo il module perche' mi permette di creare variabili
+						interne che esistono solo
 						all'interno dello scope del module *)
 		risultato = calcoli;
 

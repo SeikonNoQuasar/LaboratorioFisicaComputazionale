@@ -1,0 +1,64 @@
+SHELL SCRIPT:
+
+chmod u+x *nomefile* 	= rende il file eseguibile (r, w per leggibile e scrivibile, - per togliere)
+wc *nomefile*		= conta il numero di parole di un file
+grep *cosa* *nomefile*	= cerca *cosa* nel file scelto
+tar -cvf *nomearchvio*.tar *nome_sottocartella* 	= crea un archivio contenente la sottocartella e i contenuti
+gzip *nomefile*		= zippa il file (o la cartella?) scelta
+
+pdflatex *file.tex*	= invoca il compilatore di latex e crea direttamente un pdf (doppia compilazione!)
+evince *file.tex*	= apre un pdf
+
+echo *VARIABILE*	= scrive la variabile
+echo $*VARIABILE*	= scrive il contenuto della variabile
+
+#!/bin/bash		= shabang!
+
+
+
+
+
+
+
+
+
+MATHEMATICA:
+
+math 		= attiva il kernel di mathematica
+<<*file.m*	= apre in mathematica un file scritto dall'utente
+??*comando*	= mi apre l'help di un comando di mathematica
+
+Head[variabile]		= mi dice di che tipo è la mia variabile
+*Lista*[[i]]		= accede all'elemento i-esimo della lista (0 è la lista stessa, 1 il primo elemento)
+*Lista*[[i,j]]		= accede all'elemento j-esimo della lista che sta alla posizione i-esima della lista
+/.			= apply all
+*cosa* -> *nuovacosa*	= sostituisce cosa con nuovacosa (per più regole usare graffe e spaziare con virgola)
+
+??Global'*		= permette di visualizzare tutte le variabili create (è un accento greve, non apostrofo)
+Clear[variabile]	= elimina la variabile creata
+
+
+
+
+
+
+
+
+
+C++:
+
+iomanip:
+	- hex 	= stampa in esadecimale
+	
+
+
+
+
+
+
+
+
+
+
+
+

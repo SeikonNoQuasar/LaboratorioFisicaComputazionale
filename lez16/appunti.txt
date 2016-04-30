@@ -1,0 +1,317 @@
+Lez16
+
+############################## BOTH PARTS TODAY
+
+&&&&&&&&&&&&&&&&&&&&&&&&&& VICINI: SHELL SCRIPTING (esercizi)
+
+1) script1.sh
+
+dal file spese.txt vogliamo leggere le spese fatte dalle 3 persone e poi
+modificare il file aggiungendo la somma (creando spese2.txt)
+
+spese.txt:
+____________________________________
+pippo       20   25
+pluto       10   15
+topolino    40    5
+____________________________________
+
+usando awk so che:
+	$0 = tutta la riga
+	$1 = primo elemento della riga (nome)
+	$n = n-esimo elemento della riga. gli elementi sono divisi da spazi
+
+script1.sh
+____________________________________
+
+#!/bin/bash
+
+awk '{print $2}' spese.txt > spese2.txt		#permette di copiare gli elementi $2 di spese.txt in spese2.txt (usando $0 avrei copiato le righe)
+_____________________________________
+
+
+ora voglio copiare il file sempre in spese2 ma aggiungerci la somma spaziandola dai precedenti numeri.
+
+script1.sh
+____________________________________
+
+#!/bin/bash
+
+awk '{print $0 " " $2+$3}' spese.txt > spese2.txt
+____________________________________
+
+
+voglio ora specificare che awk deve operare fino a raggiungere la fine del file, e che voglio poi che faccia anche un'altra operazione: stampare in spese2 i totali delle somme dei $2, dei $3 e delle somme (ora in $4)
+
+
+script1.sh
+____________________________________
+
+#!/bin/bash
+
+awk '{print $0 " " $2+$3}' spese.txt | awk '{sum2+=$2; sum3+=$3; sum4+=$4} END {print "totale " sum2 " " sum3 " " sum4}' >spese2.txt
+
+#ho creato tre variabili e le ho riempite, per poi stamparle dopo l'end
+____________________________________
+
+
+Se volessi salvare anche tutti i risultati parziali, mi basta implementare dei print nelle funzioni:
+
+___________________________________________________
+
+#!/bin/bash
+
+awk '{print $0 " " $2+$3}' spese.txt | awk '{sum2+=$2; sum3+=$3; sum4+=$4; print $0} END {print "totale " sum2 " " sum3 " " sum4}' >spese2.txt
+___________________________________________________
+
+
+2) script2.sh
+
+TIP: awk ha dei suoi contatori esterni che noi possiamo sfruttare (in questo caso vogliamo numerare le righe del file elenco.txt)
+
+___________________________________________________
+
+#!/bin/bash
+
+awk '{print NR " " $1}' elenco.txt > elenco2.txt
+___________________________________________________
+
+NR mi da il numero di riga in cui mi trovo
+
+
+3) script3.sh
+
+
+__________________________________________________
+
+#!/bin/bash
+
+sed -e "s:aumento:calo:g" brano.tex > brano2.tex
+	#search: aumento e_sostituisci_con: calo g:dappertutto nel file
+	#altra formula: "s/aumento/calo/g"
+__________________________________________________
+
+ -e serve per fare sostituzioni multiple, o comunque piu' operazioni, esempio:
+
+_________________________________________________________
+
+#!/bin/bash
+
+sed -e "s:aumento:calo:g"\
+    -e "s/previsto/supposto:g" brano.tex > brano2.tex
+__________________________________________________________
+
+usare -n invece limita tutto l'output alle sole righe per cui si esplicita il print
+
+script3bis.sh
+
+_________________________________________________________
+
+#!/bin/bash
+
+sed -n "s:aumento:calo:g" brano.tex > brano3.tex
+_______________________________________________________
+
+
+4) balza per ora
+
+5) script5.sh
+
+________________________________________________
+
+#!/bin/bash
+
+for((i=1;i<11;++i))
+do
+echo $i
+done
+_______________________________________________
+^
+stampa 10 numeri
+
+_______________________________________________
+
+#!/bin/bash
+
+for((i=1;i<11;++i))
+do
+	file = input$i
+	echo $file
+done
+________________________________________________
+^
+creo un file che contenga i numo "inputN' con il numero crescente al posto di
+
+______________________________________________
+
+#!/bin/bash
+
+for((i=1;i<11;++i))
+do
+	file = input$i
+	echo $file
+	echo $i > $file		
+	echo $RANDOM >> $file
+done
+______________________________________________
+
+6) praticamente gia fatto in passato (ho comunque copiato un file del prof che ha accennato ad una soluzione)
+
+simulazione) simulazione.sh 
+
+___________________________________
+
+#!/bin/bash
+
+for((i=348; i<450; i+=2))
+do
+	file=90.$i
+	output=histo2_&i.dat
+
+	sed -n '111,160p' $file > $output
+done
+_________________________________
+
+sto dicendo "inizia dalla riga 111 fino alla 160". avrei potuto mettere per esempio due parole al posto dei numeri ma avrei dovuto delimitarle tra "/"
+
+esempio: sed -n "/HISTOGRAM 9/,/HISTOGRAM 10/p"
+
+
+
+################################################# SECONDA PARTE
+
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& C++
+
+
+fino ad ora abbiamo visto solo container in sequenza, nella lezione di oggi parleremo di container associativi.
+
+a differenza dei container a cui siamo abituati, qui non possiamo pensare agli elementi di un container associativo come se fossero uno dopo l'altro.
+non c'e' un ordinamento.
+
+Tendenzialmente i container in sequenza hanno metodi di ordine 1 o n, ma per esempio aggiungere un elemento in testa puo' rivelarsi molto costoso per un
+computer. i container associativi trasformano i metodi di ordine 1 e n in metodi di ordine log(n). Molto utile se si vogliono fare molte inserzioni.
+
+
+- associative.cpp
+
+_________________________________---
+
+#include <set>
+#include <iostream>
+using namespace std;
+
+int main()
+{
+	set<int> s;
+	s.insert(99);
+	s.insert(3);
+	s.insert(5);
+	s.insert(4);
+	
+	for(auto el : s)
+	{
+		cout << el << endl;
+	}
+
+	//alternativa:
+	// for( auto it = s.begin(); it!=s.end(); ++it) {...}
+
+}
+_________________________________
+
+set e' un container associativo ma ORDINATO, infatti stampando il contenuto mi viene stampato in ordine ( 3,4,5,99 )
+
+# gli iteratori sono di categoria bidirectional
+
+nota: i set NON possono contenere copie multiple della stessa cosa AKA se ci metto dentro due 5, se poi stampo il contenuto non c'e' traccia del secondo 5
+
+posso cercare elementi all'interno dei set con la funzione s.find(elemento) che restituisce end() se non lo trova, oppure se lo trova restituisce un iteratore all'elemento.
+
+Provo ora ad aggiungere la classe widget e a creare un set di widget. cosa vuol dire ordinare in ordine crescente?
+
+-> non posso farlo (a meno che io non sappia implementare un modo per dirgli cosa vuol dire uno maggiore dell'altro -> overloading dell'operatore "<"
+
+ALTRI CONTAINER ASSOCIATIVI:
+	- multiset (non ha il constraint dell'unicita`)
+	- unordered_set (unordered_multiset)
+		- implementati come hash table
+		- lookup/inserzione "O(1)" in media. mentre caso peggiore O(N)
+	- map (e varianti)
+
+
+_____________________________________________________________________________________
+
+
+
+#include <algorithm>
+#include <vector>
+#include <list>
+#include <iostream>
+using namespace std;
+
+int main()
+{
+	vector<int> v = {1,2,3,34,4,5,56,6,76};
+	list<int> l = {1,2,3,6,3,4,8,4,7};
+	//esiste un algoritmo per ordinare la sequenza: std::sort
+
+	sort(v.begin(),v.end()); //mangia due iteratori che dicono l'intervallo in cui ordinare
+	//sort(l.begin(),l.end()); //NON SI FA COSI'. CATTIVO. LISTA NON HA RANDOM ACCESS. CAPS ON
+	l.sort();
+
+	auto it = remove(v.begin(), v.end(), 2); //remove parti da begin finisci a end e rimuovi tutti i 2. Cio' che c'e' dopo l'ultimo valore di due rimosso c'e' THRESH. Remove mi rida' un iteratore al primo oggetto della spazzatura.
+	v.erase(it, v.end()); //questo algoritmo cancella tutti gli elementi compresi tra i due iteratori
+	//erase chiama i distruttori
+
+	for (auto el : v) { cout << el << endl;}
+}
+
+____________________________________________________________
+
+BYE BYE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

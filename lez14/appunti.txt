@@ -14,8 +14,8 @@ class mypair{
 public:
 	mypair(T t,U u) : t_(t), u_(u) {};
 	T get_t() {
-		t_.pippo();	//visto che non usa nessun mypair, il compilatore si fida che quando la genererò, avrà un
-		return t_;	//membro di nome pippo. se provo a istanziare un mypair ora verrà errore
+		t_.pippo();	//visto che non uso nessun mypair, il compilatore si fida che quando la genererò, avrà
+		return t_;	//un membro di nome pippo. se provo a istanziare un mypair ora verrà errore
 	}
 	U get_t() {return u_;}
 };

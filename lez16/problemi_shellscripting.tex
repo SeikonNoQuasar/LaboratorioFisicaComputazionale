@@ -1,0 +1,84 @@
+\documentclass[12pt,italian]{article}
+
+%\usepackage[T1]{fontenc}
+%\usepackage[latin9]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\PassOptionsToPackage{normalem}{ulem}
+\usepackage{ulem}
+\usepackage{babel}
+
+\usepackage{graphicx}
+
+
+\usepackage[a4paper, total={15cm, 21.5cm}]{geometry}
+
+
+
+\usepackage{color}
+\usepackage{listings}
+\lstset{language=C++,
+                basicstyle=\footnotesize\ttfamily,
+                keywordstyle=\color{blue}\ttfamily,
+                stringstyle=\color{green}\ttfamily,
+                commentstyle=\color{red}\ttfamily,
+                morecomment=[l][\color{magenta}]{\#}
+                }
+
+
+
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\bea}{\begin{eqnarray}}
+\newcommand{\eea}{\end{eqnarray}}
+
+\setlength{\textwidth}{17cm}
+\setlength{\oddsidemargin}{-0.5cm}
+\setlength{\evensidemargin}{-0.5cm}
+
+
+\begin{document}
+
+\begin{enumerate}
+\item
+Si generi un nuovo file a partire da quello allegato {\tt spese.txt}.
+Nel nuovo file si aggiunga una colonna che contenga la somma dei valori riportati 
+nelle altre colonne di ciascuna riga.\\
+Successivamente i calcoli la somma delle tre colonne e la si aggiunga in fondo.
+
+\item
+Si aggiunga al file {\tt elenco.txt} una colonna, 
+che preceda quella dei nomi;
+in questa colonna si segni il numero progressivo di riga.
+
+\item
+Si corregga con uno script il testo nel file {\tt brano.tex},
+sostituendo alla parola ``aumento'' la parola ``calo''.
+
+\item
+Si scriva uno script che permette di identificare la PID (il numero
+identificativo) del processo {\tt cron}. Questo processo viene
+lanciato da {\tt root} all'avvio del computer.
+
+
+\item
+Si scriva uno script che 
+genera 10 files denominati {\tt input1}, {\tt input2},...
+in cui vengono scritti in due righe diverse
+il numero del file e, nella seconda riga, un numero intero random.
+
+\item
+Si calcoli, con uno script, la media dei valori della seconda colonna di ciascuno dei dieci files
+{\tt distribuzione1.dat} ... {\tt distribuzione10.dat}.
+
+
+
+\end{enumerate}
+
+
+
+
+
+
+
+\end{document}

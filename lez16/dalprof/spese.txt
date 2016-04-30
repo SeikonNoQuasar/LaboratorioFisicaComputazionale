@@ -1,0 +1,3 @@
+pippo       20   25
+pluto       10   15
+topolino    40    5

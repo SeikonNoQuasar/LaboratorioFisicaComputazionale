@@ -1,0 +1,10 @@
+SCP per prendere i file dall'Uni
+
+
+scp -rpC nomeutente@222.222.222.222:/percorso/cartella-sorgente/ /cartella-di-destinazione/
+
+scp -rpC edoardo.accetta@tolab.fisica.unimi.it:/home/studenti/edoardo.accetta/lab .
+
+Da ora in poi, ogni volta:
+
+scp -rpC edoardo.accetta@tolab.fisica.unimi.it:/home/studenti/edoardo.accetta/lab/lez## /home/dido/lab
